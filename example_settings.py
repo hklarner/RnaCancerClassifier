@@ -32,7 +32,7 @@ User input explained:
 import classifier
 
 if __name__=="__main__":
-    if 1 :
+    if 0 :
         classifier.csv2asp(
             FnameCSV,
             FnameASP,
@@ -41,6 +41,7 @@ if __name__=="__main__":
             GateTypes,
             EfficiencyConstraint,
             OptimizationStrategy)
-
+            
+    classifier.check_classifier(FnameCSV, GateInputs)
 
     
