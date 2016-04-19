@@ -14,7 +14,7 @@
 
 ## Example data file
 A data file is a 0-1 matrix that contains miRNA expression profiles and whether the tissue is healthy or cancerous.
-An example is [toydata.csv](./toydata.csv):
+An example is [toy_data.csv](./toy_data.csv):
 
 ```
 ID, Annots, g1, g2, g3
