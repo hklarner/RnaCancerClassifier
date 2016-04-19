@@ -14,7 +14,7 @@ User input explained:
   Header               = ID, Annots, g1, g2, g3, ... (ID:sampleid, Annots:0=healthy/1=cancer, g1:0=low expression/1=high expression)
  FnameASP              = ASP filename that is generated
  UpperBoundInputs      = upper bound for total number of inputs for classifier
- UpperBoundGates       = upper bount for number of gates
+ UpperBoundGates       = upper bound for number of gates
  GateTypes             = a gate type is defined by the upper bounds for its positive / negative inputs
  EfficiencyConstraint  = Katinka's efficiency constraints: positive (negative) inputs must be highly (lowly) expressed on some cancer tissue
  OptimizationStrategy  = 1..4
