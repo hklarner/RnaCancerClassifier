@@ -137,6 +137,14 @@ gate_input(2,positive,g2) gate_input(1,negative,g1)
 
 The classifier is defined in terms of the inputs to each gate.
 The predicate _gate\_input_ takes three arguments: the ID of the gate, whether the input is positive or negated and the name of the miRNA.
+As Boolean expressions the classifiers are
+
+```
+!g3 * !g1
+ g2 * !g1
+!g1 * !g3
+!g1 *  g2
+```
 
 ## Files
 
