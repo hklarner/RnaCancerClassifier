@@ -344,9 +344,10 @@ def check_classifier(FnameCSV, GateInputs):
     
     hits = set([])
     with open(FnameCSV, 'rb') as f:
-        reader = csv.reader(f)
+        reader = csv.reader(f, delimiter=",")
         
         header = reader.next()
+        header = [x.strip() for x in header]
         miRNAs = [x for x in header if not x in ["ID", "Annots"]]
         print " miRNAs: ", len(miRNAs)
         
