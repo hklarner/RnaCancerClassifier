@@ -131,7 +131,7 @@ Models       : 5
   Optimal    : 4
 ```
 
-which tells us that there are four optimal models:
+which tells us that there are four optimal classifiers:
 
 ```
 gate_input(1,negative,g3) gate_input(2,negative,g1)
