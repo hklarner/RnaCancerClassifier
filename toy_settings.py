@@ -1,11 +1,11 @@
 
 
 
-FnameCSV = "example.csv"
-FnameASP = "exmaple.asp"
-UpperBoundInputs = 4
+FnameCSV = "toy_data.csv"
+FnameASP = "toy_classifier.asp"
+UpperBoundInputs = 3
 UpperBoundGates  = 2
-GateTypes = [(2,0),]
+GateTypes = [(1,1),]
 EfficiencyConstraint = True
 OptimizationStrategy = 1
 
@@ -32,7 +32,7 @@ User input explained:
 import classifier
 
 if __name__=="__main__":
-    if 0 :
+    if 1 :
         classifier.csv2asp(
             FnameCSV,
             FnameASP,
@@ -42,6 +42,8 @@ if __name__=="__main__":
             EfficiencyConstraint,
             OptimizationStrategy)
             
-    classifier.check_classifier(FnameCSV, GateInputs)
+    if 0:
+        GateInputs = "gate_input(1,negative,g1)"
+        classifier.check_classifier(FnameCSV, GateInputs)
 
     
