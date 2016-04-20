@@ -51,13 +51,15 @@ ID, Annots, g1, g2, g3
  * `g1, g2, ...` specifies whether the expression of a miRNA in a tissue is _low_ with `0` or _high_ with `1`
  
 
-#### parameter settings
-A settings specifies parameters, i.e., the particular classifier constraints for a given problem, and calls functions of [classifier.py](./classifier.py).
-An example is [toy_settings.py](./toy_settings.py):
+#### generation of the ASP file
+An ASP file is created by a call of the function `classifier.csv2asp`.
+Its parameters specify all the classifier constraints.
+An example is given in the file [toy_settings.py](./toy_settings.py).
+The parameters are specified at the top of the file.
 
 ```
 FnameCSV = "toy_data.csv"
-FnameASP = "toy_data.asp"
+FnameASP = "toy_classifier.asp"
 UpperBoundInputs = 3
 UpperBoundGates  = 2
 GateTypes = [(1,1),]
@@ -80,6 +82,7 @@ These are the parameter of the function `classifier.csv2asp`.
    * 4 = minimize number of gates
 
 
+To generate the ASP file with the given constraints the file calls the function `classifier.csv2asp`:
 
 ```
 import classifier
@@ -96,7 +99,44 @@ if __name__=="__main__":
             OptimizationStrategy)
 ```
 
+We now you the ASP solver [Potassco](http://potassco.sourceforge.net) to compute the classifier:
 
+```
+$ gringo toy_classifier.asp | clasp --opt-mode=optN
+Solving...
+Answer: 1
+gate_input(1,positive,g2) gate_input(2,negative,g1)
+Optimization: 2 2
+Answer: 1
+gate_input(1,negative,g3) gate_input(2,negative,g1)
+Optimization: 2 2
+Answer: 2
+gate_input(1,positive,g2) gate_input(2,negative,g1)
+Optimization: 2 2
+Answer: 3
+gate_input(2,negative,g3) gate_input(1,negative,g1)
+Optimization: 2 2
+Answer: 4
+gate_input(2,positive,g2) gate_input(1,negative,g1)
+Optimization: 2 2
+OPTIMUM FOUND
+
+Models       : 5     
+  Optimum    : yes
+  Optimal    : 4
+```
+
+which tells us that there are four optimal models:
+
+```
+gate_input(1,negative,g3) gate_input(2,negative,g1)
+gate_input(1,positive,g2) gate_input(2,negative,g1)
+gate_input(2,negative,g3) gate_input(1,negative,g1)
+gate_input(2,positive,g2) gate_input(1,negative,g1)
+```
+
+The classifier is defined in terms of the inputs to each gate.
+The predicate _gate\_input_ takes three arguments: the ID of the gate, whether the input is positive or negated and the name of the miRNA.
 
 ## Files
 
