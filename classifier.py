@@ -57,7 +57,7 @@ def csv2asp(FnameCSV,
         miRNAs = [x for x in header if not x in ["ID", "Annots"]]
         print " miRNAs: ", len(miRNAs)
         
-        rows = [dict(zip(header,x)) for x in reader]
+        rows = [dict(zip(header,[y.strip() for y in x])) for x in reader]
         print " samples:", len(rows)
 
         datafile = [""]
@@ -351,7 +351,7 @@ def check_classifier(FnameCSV, GateInputs):
         miRNAs = [x for x in header if not x in ["ID", "Annots"]]
         print " miRNAs: ", len(miRNAs)
         
-        samples = [dict(zip(header,x)) for x in reader]
+        samples = [dict(zip(header,[y.strip() for y in x])) for x in reader]
         print " samples:", len(samples)
 
         function = gateinputs2function(GateInputs)
