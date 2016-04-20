@@ -40,24 +40,24 @@ def csv2asp(FnameCSV,
         EfficiencyConstraint,
         OptimizationStrategy):
 
-    print "Input File:", FnameCSV
+    print "\n--- csv2asp"
+    print " input file:", FnameCSV
     print " upper bound on inputs:", UpperBoundInputs
     print " upper bound on gates:", UpperBoundGates
     print " gate types (upper bound positive / negative inputs):", GateTypes
     print " efficiency constraints:",EfficiencyConstraint
     print " optimization strategy:",OptimizationStrategy, "(%s)"%OptimizationStrategyMapping[OptimizationStrategy]
-    print " Note: a classifier is the conjunction of disjunctive gates (CNF)"
     
 
     with open(FnameCSV, 'rb') as f:
         reader = csv.reader(f, delimiter=",")
-        
         header = reader.next()
         header = [x.strip() for x in header]
         miRNAs = [x for x in header if not x in ["ID", "Annots"]]
-        print " miRNAs: ", len(miRNAs)
-        
         rows = [dict(zip(header,[y.strip() for y in x])) for x in reader]
+
+
+        print " miRNAs: ", len(miRNAs)
         print " samples:", len(rows)
 
         datafile = [""]
@@ -216,20 +216,22 @@ def csv2asp(FnameCSV,
     with open(FnameASP, 'w') as f:
        f.writelines("\n".join(datafile))
 
-    print "Created:", FnameASP
-    print "To execute run: gringo %s | clasp --opt-mode=optN"%FnameASP
+    print " created:", FnameASP
+    print " now run: gringo %s | clasp --opt-mode=optN"%FnameASP
 
 
-def gateinputs2pdf(GateInputs, FnamePDF):
+def gateinputs2pdf(FnamePDF, GateInputs):
     """
     Example for GateInputs:
 
     gate_input(1,positive,g189) gate_input(1,positive,g224) gate_input(2,positive,g89) gate_input(2,positive,g108) gate_input(2,positive,g154) gate_input(3,negative,g31)
     """
+    print "\n--- gateinputs2pdf"
 
     GateInputs = GateInputs.strip()
     GateInputs = GateInputs.split()
-    print "found % inputs:"%len(GateInputs),GateInputs
+    print " found %i inputs:"%len(GateInputs),GateInputs
+    
     GateInputs = [x[x.find("(")+1:-1].split(",") for x in GateInputs]
 
 
@@ -259,6 +261,7 @@ def gateinputs2pdf(GateInputs, FnamePDF):
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate( input=dotfile )
     proc.stdin.close()
+    print " created", FnamePDF
 
 
 def gateinputs2function(GateInputs):
@@ -278,7 +281,7 @@ def gateinputs2function(GateInputs):
 
     GateInputs = GateInputs.strip()
     GateInputs = GateInputs.split()
-    print "found %i inputs:"%len(GateInputs),GateInputs
+    print " found %i input(s) for function generation:"%len(GateInputs),GateInputs
     GateInputs = [x[x.find("(")+1:-1].split(",") for x in GateInputs]
 
     seen = set([])
@@ -340,41 +343,40 @@ def check_classifier(FnameCSV, GateInputs):
 
     gate_input(1,positive,g189) gate_input(1,positive,g224) gate_input(2,positive,g89) gate_input(2,positive,g108) gate_input(2,positive,g154) gate_input(3,negative,g31)
     """
+    print "\n--- check_classifier"
 
     
     hits = set([])
     with open(FnameCSV, 'rb') as f:
         reader = csv.reader(f, delimiter=",")
-        
         header = reader.next()
         header = [x.strip() for x in header]
         miRNAs = [x for x in header if not x in ["ID", "Annots"]]
+        rows = [dict(zip(header,[y.strip() for y in x])) for x in reader]
+
         print " miRNAs: ", len(miRNAs)
-        
-        samples = [dict(zip(header,[y.strip() for y in x])) for x in reader]
-        print " samples:", len(samples)
+        print " samples:", len(rows)
 
         function = gateinputs2function(GateInputs)
-        for x in samples:
+        print " testing each sample against the function.."
+        for x in rows:
             malfunction = function(x)
             if malfunction:
                 hits.add(x["ID"])
                 for location in malfunction:
-                    print "-- found malfunction:"
+                    print " ** found malfunction:"
                     for item in sorted(location.items()):
-                        print " %s=%s"%item
+                        print "    %s = %s"%item
                     
 
-    print "classifier=",GateInputs
-    print "data=",FnameCSV
+    print " classifier =",GateInputs
+    print " data =",FnameCSV
     if hits:
-        print "result= %i inconsistencies"%(len(hits)), hits
+        print " result = %i inconsistencies"%(len(hits)), hits
     else:
-        print "result= classifier and data are consistent"
+        print " result = classifier and data are consistent"
 
-
-
-        
+ 
 
 if __name__=="__main__":
     print "nothing to do"
