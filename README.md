@@ -3,13 +3,13 @@
 ## Files
 
  * [classifier.py](./classifier.py) contains the main functions:
-   * _csv2asp_ converts a csv data file into a [Potassco](http://potassco.sourceforge.net) ASP file for the construction of a classifier
-   * _gateinputs2pdf_ generates a graph-based drawing of a classifier
-   * _gateinputs2function_ used internally by _check\_classifier_
-   * _check\_classifier_ checks whether a given classifier is consistent with a given data file
+   * **csv2asp** converts a csv data file into a [Potassco](http://potassco.sourceforge.net) ASP file for the construction of a classifier
+   * **gateinputs2pdf** generates a graph-based drawing of a classifier
+   * **gateinputs2function** used internally by _check\_classifier_
+   * **check\_classifier** checks whether a given classifier is consistent with a given data file
  
- * [toy_data.csv](./toy_data.csv) contains a toy example of input data  
- * [toy_settings.py](./toy_settings.py) contains an example of input parameters for the [toy_data.csv](./toy_data.csv)
+ * [toy_data.csv](./toy_data.csv) an example of input data  
+ * [toy_settings.py](./toy_settings.py) an example of parameters settings
  
 
 ## Example data file
