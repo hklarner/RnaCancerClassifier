@@ -171,14 +171,14 @@ The result is the file [toy_classifier.pdf](./toy_classifier.pdf):
 
 #### check consistency
 All classifiers obtained from the ASP solver are by definition consistent with the data.
-Sometime it may be necessary to check whether a classifier that is not obtained from the ASP problem and a given data matrix are consistent.
-In that case you have to convert the classifier into a _gate\_input_ string and call the function `classifier.check_classifier`:
+Sometimes it may be necessary to check whether a classifier that is not obtained from the ASP solver is consistent with a given data file.
+In that case you have to convert the classifier into a _gate\_input_ string (by hand) and call the function `classifier.check_classifier`:
 
 ```
     GateInputs = "gate_input(1,negative,g1)"
     classifier.check_classifier(FnameCSV, GateInputs)
 ```
-The output prints all encountered inconsistencies:
+The output informs you of all encountered inconsistencies (malfunctions):
 
 ```
 --- check_classifier
