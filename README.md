@@ -2,12 +2,12 @@
 This project is about converting miRNA expression profiles of healthy and cancerous tissue samples into an Answer Set Program (ASP)
 that constructs an optimal Boolean classifier for distinguishing between these tissue types in terms of their miRNA fingerprint.
 
+
+## What is a classifier?
 Mathematically, a classifier is a Boolean expression where a variable represents _high_ or _low_ presence of a particular miRNA.
 The structure of the Boolean expression should be constrained by the types of biochemical circuits that may be synthesized in a laboratory.
 
-
-## What is a classifier?
-A classifier is a Boolean expression that must be given in _conjunctive normal form_ (CNF).
+First, it must be given in _conjunctive normal form_ (CNF).
 In this context, each (disjunctive) term of a CNF is called _gate_.
 If the expression evaluates to `1`, i.e.,  iff all gates evaluate to `1`, then the classifier predicts cancerous tissue.
 An example of a classifier with three gates and six inputs is:
