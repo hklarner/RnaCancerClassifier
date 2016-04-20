@@ -51,7 +51,7 @@ ID, Annots, g1, g2, g3
  * `g1, g2, ...` specifies whether the expression of a miRNA in a tissue is _low_ with `0` or _high_ with `1`
  
 
-#### generation of the ASP file
+#### generate the ASP file
 An ASP file is created by a call of the function `classifier.csv2asp`.
 Its parameters specify all the classifier constraints.
 An example is given in the file [toy_settings.py](./toy_settings.py).
@@ -85,18 +85,23 @@ The meaning of the parameters is explained below:
 To generate the ASP file with the given constraints, call the function `classifier.csv2asp`:
 
 ```
-import classifier
+    classifier.csv2asp(FnameCSV, FnameASP, UpperBoundInputs, UpperBoundGates,
+                       GateTypes, EfficiencyConstraint, OptimizationStrategy)
+```
 
-if __name__=="__main__":
-    if 1 :
-        classifier.csv2asp(
-            FnameCSV,
-            FnameASP,
-            UpperBoundInputs,
-            UpperBoundGates,
-            GateTypes,
-            EfficiencyConstraint,
-            OptimizationStrategy)
+The output is
+```
+--- csv2asp
+ input file: toy_data.csv
+ upper bound on inputs: 3
+ upper bound on gates: 1
+ gate types (upper bound positive / negative inputs): [(3, 3)]
+ efficiency constraints: True
+ optimization strategy: 2 (minimize inputs then minimize gates)
+ miRNAs:  3
+ samples: 3
+ created: toy_classifier.asp
+ now run: gringo toy_classifier.asp | clasp --opt-mode=optN
 ```
 
 Now use the ASP solver [Potassco](http://potassco.sourceforge.net) to compute the optimal classifiers:
@@ -146,7 +151,7 @@ As Boolean expressions the classifiers are
 !g1 *  g2
 ```
 
-#### generation of a PDF drawing of a classifier
+#### visualize a classifier
 To create a drawing of a classifier call the function `classifier.gateinputs2pdf`:
 
 ```
@@ -155,8 +160,44 @@ To create a drawing of a classifier call the function `classifier.gateinputs2pdf
    classifier.gateinputs2pdf(FnamePDF, GateInputs)
 ```
 The function require the program [dot](www.graphviz.org).
-The output is the file [toy_classifier.pdf](./toy_classifier.pdf) which is shown below:
-![toy_classifier.pdf](./toy_classifier.pdf)
+The output is the file [toy_classifier.pdf](./toy_classifier.pdf):
+
+```
+--- gateinputs2pdf
+ found 2 inputs: ['gate_input(2,positive,g2)', 'gate_input(1,negative,g1)']
+ created toy_classifier.pdf
+```
+
+
+#### check consistency
+All classifiers obtained from the ASP solver are by definition consistent with the data.
+Sometime it may be necessary to check whether a classifier that is not obtained from the ASP problem and a given data matrix are consistent.
+In that case you have to convert the classifier into a _gate\_input_ string and call the function `classifier.check_classifier`:
+
+```
+    GateInputs = "gate_input(1,negative,g1)"
+    classifier.check_classifier(FnameCSV, GateInputs)
+```
+The output prints all encountered inconsistencies:
+
+```
+--- check_classifier
+ miRNAs:  3
+ samples: 3
+ found 1 input(s) for function generation: ['gate_input(1,negative,g1)']
+ testing each sample against the function..
+ ** found malfunction:
+    gate_id = 1
+    gate_inputs = set([('g1', 'negative')])
+    miRNA_expressions = g1=0
+    tissue = healthy
+    tissue_id = 2
+ classifier = gate_input(1,negative,g1)
+ data = toy_data.csv
+ result = 1 inconsistencies set(['2'])
+```
+
+
 
 
 ## Files
