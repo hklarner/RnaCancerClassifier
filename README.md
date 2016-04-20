@@ -56,7 +56,28 @@ A settings specifies parameters, i.e., the particular classifier constraints for
 An example is [toy_settings.py](./toy_settings.py):
 
 ```
+FnameCSV = "toy_data.csv"
+FnameASP = "toy_data.asp"
+UpperBoundInputs = 3
+UpperBoundGates  = 2
+GateTypes = [(1,1),]
+EfficiencyConstraint = True
+OptimizationStrategy = 1
 
+...
+
+import classifier
+
+if __name__=="__main__":
+    if 1 :
+        classifier.csv2asp(
+            FnameCSV,
+            FnameASP,
+            UpperBoundInputs,
+            UpperBoundGates,
+            GateTypes,
+            EfficiencyConstraint,
+            OptimizationStrategy)
 ```
 
 
