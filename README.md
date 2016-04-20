@@ -5,8 +5,7 @@ This project is about converting miRNA expression profiles of healthy and cancer
 that constructs an optimal Boolean classifier for distinguishing between these tissue types in terms of their miRNA fingerprint.
 
 Mathematically, a classifier is a Boolean expression where a variable represents _high_ or _low_ presence of a particular miRNA.
-
-The structure of the Boolean expression is constrained by what the types of biochemical circuits that can be synthesized in a laboratory.
+The structure of the Boolean expression should be constrained by the types of biochemical circuits that may be synthesized in a laboratory.
 
 
 ## What is a classifier?
@@ -18,7 +17,7 @@ An example of a classifier with three gates and six inputs is:
 ```
  (g7 + g12 + !g13) * (g2 + g5) * (!g8)
 ```
-where `+` means disjunction, `*` means conjunction and `!` means negation.
+where `g7` represents the expression of miRNA number seven, `+` means disjunction, `*` means conjunction and `!` means negation.
 
 
 #### constraints
