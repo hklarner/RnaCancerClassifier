@@ -67,22 +67,22 @@ EfficiencyConstraint = True
 OptimizationStrategy = 1
 ```
 
-These are the parameter of the function `classifier.csv2asp`.
+The meaning of the parameters is explained below:
 
- * **FnameCSV** the data file
- * **FnameASP** the ASP file to be generated
- * **UpperBoundInputs** upper bound on total number of inputs
- * **UpperBoundGates** upper bound on number of gates
- * **GateTypes** a list of tuples `(x,y)` where `x` is the upper bound of non-negated inputs and `y` the upper bound of negated inputs of a gate of that type
- * **EfficiencyConstraint** should be kept at `True`
- * **OptimizationStrategy** a number between one and four where
+ * _FnameCSV_ the data file
+ * _FnameASP_ the ASP file to be generated
+ * _UpperBoundInputs_ upper bound on total number of inputs
+ * _UpperBoundGates_ upper bound on number of gates
+ * _GateTypes_ a list of tuples `(x,y)` where `x` is the upper bound of non-negated inputs and `y` the upper bound of negated inputs of a gate of that type
+ * _EfficiencyConstraint_ should be kept at `True`
+ * _OptimizationStrategy_ a number between one and four where
    * 1 = minimize number of gates, then minimize number of inputs
    * 2 = minimize number of inputs, then minimize number of gates
    * 3 = minimize number of inputs
    * 4 = minimize number of gates
 
 
-To generate the ASP file with the given constraints the file calls the function `classifier.csv2asp`:
+To generate the ASP file with the given constraints, call the function `classifier.csv2asp`:
 
 ```
 import classifier
@@ -99,7 +99,7 @@ if __name__=="__main__":
             OptimizationStrategy)
 ```
 
-We now you the ASP solver [Potassco](http://potassco.sourceforge.net) to compute the classifier:
+Now use the ASP solver [Potassco](http://potassco.sourceforge.net) to compute the optimal classifiers:
 
 ```
 $ gringo toy_classifier.asp | clasp --opt-mode=optN
