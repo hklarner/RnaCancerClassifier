@@ -159,8 +159,8 @@ To create a drawing of a classifier call the function `classifier.gateinputs2pdf
    FnamePDF = "toy_classifier.pdf"
    classifier.gateinputs2pdf(FnamePDF, GateInputs)
 ```
-The function require the program [dot](www.graphviz.org).
-The output is the file [toy_classifier.pdf](./toy_classifier.pdf):
+The function requires the program [dot](www.graphviz.org).
+The result is the file [toy_classifier.pdf](./toy_classifier.pdf):
 
 ```
 --- gateinputs2pdf
