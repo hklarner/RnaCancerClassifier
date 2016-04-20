@@ -146,6 +146,19 @@ As Boolean expressions the classifiers are
 !g1 *  g2
 ```
 
+#### generation of a PDF drawing of a classifier
+To create a drawing of a classifier call the function `classifier.gateinputs2pdf`:
+
+```
+   GateInputs = "gate_input(2,positive,g2) gate_input(1,negative,g1)"
+   FnamePDF = "toy_classifier.pdf"
+   classifier.gateinputs2pdf(FnamePDF, GateInputs)
+```
+The function require the program [dot](www.graphviz.org).
+The output is the file [toy_classifier.pdf](./toy_classifier.pdf) which is shown below:
+![toy_classifier.pdf](./toy_classifier.pdf)
+
+
 ## Files
 
  * [classifier.py](./classifier.py) contains the main functions:
