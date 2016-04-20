@@ -12,7 +12,7 @@
  * [toy_settings.py](./toy_settings.py) an example of parameters settings
  
 
-## Example data file
+## Example input data
 A data file is a 0-1 matrix that contains miRNA expression profiles and whether the tissue is healthy or cancerous.
 An example is [toy_data.csv](./toy_data.csv):
 
@@ -27,5 +27,5 @@ ID, Annots, g1, g2, g3
  * `g1, g2, ...` denotes the expression of a miRNA is _low_ by `0` or _high_ by `1`
  
 
-## Example settings file
+## Example of parameter settings
 A settings file calls functions of [classifier.py](./classifier.py) contains the input parameters 
