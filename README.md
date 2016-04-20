@@ -1,6 +1,4 @@
 # RnaCancerClassifier
-
-## What is RnaCancerClassifier about?
 This project is about converting miRNA expression profiles of healthy and cancerous tissue samples into an Answer Set Program (ASP)
 that constructs an optimal Boolean classifier for distinguishing between these tissue types in terms of their miRNA fingerprint.
 
@@ -20,7 +18,7 @@ An example of a classifier with three gates and six inputs is:
 where `g7` represents the expression of miRNA number seven, `+` means disjunction, `*` means conjunction and `!` means negation.
 
 
-#### constraints
+#### types of constraints
 Currently we have implemented the following constraints:
 
  * upper bound for number of total inputs
@@ -54,7 +52,12 @@ ID, Annots, g1, g2, g3
  
 
 #### parameter settings
-A settings file calls functions of [classifier.py](./classifier.py) contains the input parameters
+A settings specifies parameters, i.e., the particular classifier constraints for a given problem, and calls functions of [classifier.py](./classifier.py).
+An example is [toy_settings.py](./toy_settings.py):
+
+```
+
+```
 
 
 
