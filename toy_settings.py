@@ -4,10 +4,10 @@
 FnameCSV = "toy_data.csv"
 FnameASP = "toy_classifier.asp"
 UpperBoundInputs = 3
-UpperBoundGates  = 2
-GateTypes = [(1,1),]
+UpperBoundGates  = 1
+GateTypes = [(3,3),]
 EfficiencyConstraint = True
-OptimizationStrategy = 1
+OptimizationStrategy = 2
 
 """
 User input explained:
@@ -42,8 +42,13 @@ if __name__=="__main__":
             EfficiencyConstraint,
             OptimizationStrategy)
             
-    if 0:
+    if 1:
         GateInputs = "gate_input(1,negative,g1)"
         classifier.check_classifier(FnameCSV, GateInputs)
+
+    if 1:
+        GateInputs = "gate_input(2,positive,g2) gate_input(1,negative,g1)"
+        FnamePDF = "toy_classifier.pdf"
+        classifier.gateinputs2pdf(FnamePDF, GateInputs)
 
     
