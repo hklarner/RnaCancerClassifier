@@ -74,10 +74,10 @@ These are the parameter of the function `classifier.csv2asp`.
  * **GateTypes** a list of tuples `(x,y)` where `x` is the upper bound of non-negated inputs and `y` the upper bound of negated inputs of a gate of that type
  * **EfficiencyConstraint** should be kept at `True`
  * **OptimizationStrategy** a number between one and four where
-   1: minimize number of gates, then minimize number of inputs
-   2: minimize number of inputs, then minimize number of gates
-   3: minimize number of inputs
-   4: minimize number of gates
+   * 1 = minimize number of gates, then minimize number of inputs
+   * 2 = minimize number of inputs, then minimize number of gates
+   * 3 = minimize number of inputs
+   * 4 = minimize number of gates
 
 
 
