@@ -1,7 +1,6 @@
 # RnaCancerClassifier
 This project is about converting miRNA expression profiles of healthy and cancerous tissue samples into an Answer Set Program (ASP)
 that constructs an optimal Boolean classifier for distinguishing between these tissue types in terms of their miRNA fingerprint.
-hallo
 
 ## What is a classifier?
 Mathematically, a classifier is a Boolean expression where a variable represents _high_ or _low_ presence of a particular miRNA.
