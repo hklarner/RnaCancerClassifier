@@ -15,7 +15,7 @@ User input explained:
  FnameASP              = ASP filename that is generated
  UpperBoundInputs      = upper bound for total number of inputs for classifier
  UpperBoundGates       = upper bound for number of gates
- GateTypes             = a gate type is defined by the upper bounds for its positive / negative inputs
+ GateTypes             = a gate type is defined by (upper bound positive inputs, upper bound negative inputs , upper bound appearance of gate type)
  EfficiencyConstraint  = Katinka's efficiency constraints: positive (negative) inputs must be highly (lowly) expressed on some cancer tissue
  OptimizationStrategy  = 1..4
    1 = minimize number of gates, then minimize number of inputs
@@ -44,7 +44,7 @@ def csv2asp(FnameCSV,
     print " input file:", FnameCSV
     print " upper bound on inputs:", UpperBoundInputs
     print " upper bound on gates:", UpperBoundGates
-    print " gate types (upper bound positive / negative inputs):", GateTypes
+    print " gate types (upper bound positive , negative inputs , upper bound appearance):", GateTypes
     print " efficiency constraints:",EfficiencyConstraint
     print " optimization strategy:",OptimizationStrategy, "(%s)"%OptimizationStrategyMapping[OptimizationStrategy]
     
@@ -115,9 +115,10 @@ def csv2asp(FnameCSV,
     datafile+= ["is_gate_type(1..%i)."%len(GateTypes)]
 
     for x, gate_type in enumerate(GateTypes):
-        ub_pos, ub_neg = gate_type
+        ub_pos, ub_neg, ub_ap = gate_type
         datafile+= ["upper_bound_pos_inputs(%i, %i). %% GateType=%i"%(x+1,ub_pos,x+1)]
         datafile+= ["upper_bound_neg_inputs(%i, %i). %% GateType=%i"%(x+1,ub_neg,x+1)]
+        datafile+= ["upper_bound_gate_type(%i, %i). %% GateType=%i"%(x+1,ub_ap,x+1)]
         
 
     datafile+= [""]
@@ -166,7 +167,11 @@ def csv2asp(FnameCSV,
     datafile+= ['']
     datafile+= ['% the total number of inputs is bounded']
     datafile+= ['{gate_input(GateID, Sign, MiRNA): is_gate_id(GateID), is_sign(Sign), is_miRNA(MiRNA)} X :- upper_bound_total_inputs(X).']
-    
+        
+    datafile+= ['']
+    datafile+= ['% the number of gates of a gate type is bounded']
+    datafile+= ['{gate_type(GateID,T): is_gate_type(T), is_gate_id(GateID)} X :- upper_bound_gate_type(T,X).']
+
     datafile+= ['']
     datafile+= ['% gates are disjunctive (one active input suffices to activate gate)']
     datafile+= ["gate_evaluation(GateID,TissueID) :- gate_input(GateID,positive,MiRNA), data(TissueID,MiRNA,high)."]

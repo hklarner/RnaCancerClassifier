@@ -2,7 +2,6 @@
 This project is about converting miRNA expression profiles of healthy and cancerous tissue samples into an Answer Set Program (ASP)
 that constructs an optimal Boolean classifier for distinguishing between these tissue types in terms of their miRNA fingerprint.
 
-
 ## What is a classifier?
 Mathematically, a classifier is a Boolean expression where a variable represents _high_ or _low_ presence of a particular miRNA.
 The structure of the Boolean expression should be constrained by the types of biochemical circuits that may be synthesized in a laboratory.
@@ -128,7 +127,7 @@ Models       : 5
   Optimal    : 4
 ```
 
-which tells us that there are four optimal models:
+which tells us that there are four optimal classifiers:
 
 ```
 gate_input(1,negative,g3) gate_input(2,negative,g1)
@@ -137,9 +136,9 @@ gate_input(2,negative,g3) gate_input(1,negative,g1)
 gate_input(2,positive,g2) gate_input(1,negative,g1)
 ```
 
-The classifier is defined in terms of the inputs to each gate.
-The predicate _gate\_input_ takes three arguments: the ID of the gate, whether the input is positive or negated and the name of the miRNA.
-As Boolean expressions the classifiers are
+A classifier is defined in terms of the inputs to each of its gates.
+The three arguments of each _gate\_input_ are: the ID of the gate, whether the input is positive or negated and the name of the miRNA.
+Converted into Boolean expressions the classifiers above are
 
 ```
 !g3 * !g1
@@ -156,8 +155,8 @@ To create a drawing of a classifier call the function `classifier.gateinputs2pdf
    FnamePDF = "toy_classifier.pdf"
    classifier.gateinputs2pdf(FnamePDF, GateInputs)
 ```
-The function require the program [dot](www.graphviz.org).
-The output is the file [toy_classifier.pdf](./toy_classifier.pdf):
+The function requires the program [dot](www.graphviz.org).
+The result is the file [toy_classifier.pdf](./toy_classifier.pdf):
 
 ```
 --- gateinputs2pdf
@@ -168,14 +167,14 @@ The output is the file [toy_classifier.pdf](./toy_classifier.pdf):
 
 #### check consistency
 All classifiers obtained from the ASP solver are by definition consistent with the data.
-Sometime it may be necessary to check whether a classifier that is not obtained from the ASP problem and a given data matrix are consistent.
-In that case you have to convert the classifier into a _gate\_input_ string and call the function `classifier.check_classifier`:
+Sometimes it may be necessary to check whether a classifier that is not obtained from the ASP solver is consistent with a given data file.
+In that case you have to convert the classifier into a _gate\_input_ string (by hand) and call the function `classifier.check_classifier`:
 
 ```
     GateInputs = "gate_input(1,negative,g1)"
     classifier.check_classifier(FnameCSV, GateInputs)
 ```
-The output prints all encountered inconsistencies:
+The output informs you of all encountered inconsistencies (malfunctions):
 
 ```
 --- check_classifier

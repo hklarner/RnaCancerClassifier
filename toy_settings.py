@@ -3,9 +3,9 @@
 
 FnameCSV = "toy_data.csv"
 FnameASP = "toy_classifier.asp"
-UpperBoundInputs = 3
-UpperBoundGates  = 1
-GateTypes = [(3,3),]
+UpperBoundInputs = 2
+UpperBoundGates  = 2
+GateTypes = [(1,0,1),(0,1,2)]
 EfficiencyConstraint = True
 OptimizationStrategy = 2
 
@@ -17,7 +17,7 @@ User input explained:
  FnameASP              = ASP filename that is generated
  UpperBoundInputs      = upper bound for total number of inputs for classifier
  UpperBoundGates       = upper bount for number of gates
- GateTypes             = a gate type is defined by the upper bounds for its positive / negative inputs
+ GateTypes             = a gate type is defined by (upper bound positive inputs, upper bound negative inputs , upper bound appearance of gate type)
  EfficiencyConstraint  = Katinka's efficiency constraints: positive (negative) inputs must be highly (lowly) expressed on some cancer tissue
  OptimizationStrategy  = 1..4
    1 = minimize number of gates, then minimize number of inputs
