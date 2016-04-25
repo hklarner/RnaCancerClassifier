@@ -15,7 +15,12 @@ User input explained:
  FnameASP              = ASP filename that is generated
  UpperBoundInputs      = upper bound for total number of inputs for classifier
  UpperBoundGates       = upper bound for number of gates
- GateTypes             = a gate type is defined by (upper bound positive inputs, upper bound negative inputs , upper bound appearance of gate type)
+ GateTypes             = a gate type is defined in terms of
+   LowerBoundPos = lower bound of positive inputs to gate
+   UpperBoundPos = upper bound of positive inputs to gate
+   LowerBoundNeg = lower bound of negative inputs to gate
+   UpperBoundNeg = upper bound of negative inputs to gate
+   UpperBoundOcc = upper bound of occurences of gate in classifier
  EfficiencyConstraint  = Katinka's efficiency constraints: positive (negative) inputs must be highly (lowly) expressed on some cancer tissue
  OptimizationStrategy  = 1..4
    1 = minimize number of gates, then minimize number of inputs
@@ -44,7 +49,7 @@ def csv2asp(FnameCSV,
     print " input file:", FnameCSV
     print " upper bound on inputs:", UpperBoundInputs
     print " upper bound on gates:", UpperBoundGates
-    print " gate types (upper bound positive , negative inputs , upper bound appearance):", GateTypes
+    print " gate types:", GateTypes
     print " efficiency constraints:",EfficiencyConstraint
     print " optimization strategy:",OptimizationStrategy, "(%s)"%OptimizationStrategyMapping[OptimizationStrategy]
     
@@ -70,7 +75,7 @@ def csv2asp(FnameCSV,
         datafile+= ["%% InputFile = %s"%FnameCSV]
         datafile+= ["%%  upper bound on inputs: %i"%UpperBoundInputs]
         datafile+= ["%%  upper bound on gates: %i"%UpperBoundGates]
-        datafile+= ["%%  gate types (upper bound positive / negative inputs): %s"%str(GateTypes)]
+        datafile+= ["%%  gate types: %s"%str(GateTypes)]
         datafile+= ["%%  efficiency constraints: %s"%str(EfficiencyConstraint)]
         datafile+= ["%%  optimization strategy: %i  (%s)"%(OptimizationStrategy,OptimizationStrategyMapping[OptimizationStrategy])]
         datafile+= [""]
@@ -115,10 +120,11 @@ def csv2asp(FnameCSV,
     datafile+= ["is_gate_type(1..%i)."%len(GateTypes)]
 
     for x, gate_type in enumerate(GateTypes):
-        ub_pos, ub_neg, ub_ap = gate_type
-        datafile+= ["upper_bound_pos_inputs(%i, %i). %% GateType=%i"%(x+1,ub_pos,x+1)]
-        datafile+= ["upper_bound_neg_inputs(%i, %i). %% GateType=%i"%(x+1,ub_neg,x+1)]
-        datafile+= ["upper_bound_gate_type(%i, %i). %% GateType=%i"%(x+1,ub_ap,x+1)]
+        datafile+= ["upper_bound_pos_inputs(%i, %i). %% GateType_%i"%(x+1,gate_type["UpperBoundPos"],x+1)]
+        datafile+= ["upper_bound_neg_inputs(%i, %i). %% GateType_%i"%(x+1,gate_type["UpperBoundNeg"],x+1)]
+        datafile+= ["lower_bound_pos_inputs(%i, %i). %% GateType_%i"%(x+1,gate_type["LowerBoundPos"],x+1)]
+        datafile+= ["lower_bound_neg_inputs(%i, %i). %% GateType_%i"%(x+1,gate_type["LowerBoundNeg"],x+1)]
+        datafile+= ["upper_bound_gate_type(%i, %i). %% GateType_%i"%(x+1,gate_type["UpperBoundOcc"],x+1)]
         
 
     datafile+= [""]
@@ -147,15 +153,15 @@ def csv2asp(FnameCSV,
 
         datafile+= ['']
         datafile+= ['% Third decision: each gate is assigned a number of inputs']
-        datafile+= ['0 {gate_input(GateID, positive, MiRNA): feasible_pos_miRNA(MiRNA)} X :- is_gate_id(GateID), gate_type(GateID, GateType), upper_bound_pos_inputs(GateType, X).']
-        datafile+= ['0 {gate_input(GateID, negative, MiRNA): feasible_neg_miRNA(MiRNA)} X :- is_gate_id(GateID), gate_type(GateID, GateType), upper_bound_neg_inputs(GateType, X).']
+        datafile+= ['X {gate_input(GateID, positive, MiRNA): feasible_pos_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
+        datafile+= ['X {gate_input(GateID, negative, MiRNA): feasible_neg_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']
         
     else:
         datafile+= ['% efficiency OFF: unrestricted miRNAs for inputs']
         datafile+= ['']
         datafile+= ['% Third decision: each gate is assigned a number of inputs']
-        datafile+= ['0 {gate_input(GateID, positive, MiRNA): is_miRNA(MiRNA)} X :- is_gate_id(GateID), gate_type(GateID, GateType), upper_bound_pos_inputs(GateType, X).']
-        datafile+= ['0 {gate_input(GateID, negative, MiRNA): is_miRNA(MiRNA)} X :- is_gate_id(GateID), gate_type(GateID, GateType), upper_bound_neg_inputs(GateType, X).']        
+        datafile+= ['X {gate_input(GateID, positive, MiRNA): is_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
+        datafile+= ['X {gate_input(GateID, negative, MiRNA): is_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
         
     
     datafile+= ['']

@@ -61,7 +61,12 @@ FnameCSV = "toy_data.csv"
 FnameASP = "toy_classifier.asp"
 UpperBoundInputs = 3
 UpperBoundGates  = 2
-GateTypes = [(1,1),]
+GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":1,
+              "LowerBoundNeg":0,"UpperBoundNeg":0,
+              "UpperBoundOcc":1},
+             {"LowerBoundPos":0,"UpperBoundPos":0,
+              "LowerBoundNeg":0,"UpperBoundNeg":1,
+              "UpperBoundOcc":2}]
 EfficiencyConstraint = True
 OptimizationStrategy = 1
 ```
@@ -72,7 +77,14 @@ The meaning of the parameters is explained below:
  * _FnameASP_ the ASP file to be generated
  * _UpperBoundInputs_ upper bound on total number of inputs
  * _UpperBoundGates_ upper bound on number of gates
- * _GateTypes_ a list of tuples `(x,y)` where `x` is the upper bound of non-negated inputs and `y` the upper bound of negated inputs of a gate of that type
+ * _GateTypes_ a dictionary with keys
+   * `LowerBoundPos` = lower bound of positive inputs to gate
+   * `UpperBoundPos` = upper bound of positive inputs to gate
+   * `LowerBoundNeg` = lower bound of negative inputs to gate
+   * `UpperBoundNeg` = upper bound of negative inputs to gate
+   * `UpperBoundOcc` = upper bound of occurences of gate in classifier
+   
+    of tuples `(x,y)` where `x` is the upper bound of non-negated inputs and `y` the upper bound of negated inputs of a gate of that type
  * _EfficiencyConstraint_ should be kept at `True`
  * _OptimizationStrategy_ a number between one and four where
    * 1 = minimize number of gates, then minimize number of inputs
