@@ -107,11 +107,8 @@ The output is
 Now use the ASP solver [Potassco](http://potassco.sourceforge.net) to compute the optimal classifiers:
 
 ```
-$ gringo toy_classifier.asp | clasp --opt-mode=optN
+$ gringo toy_classifier.asp | clasp --opt-mode=optN --quiet=1
 Solving...
-Answer: 1
-gate_input(1,positive,g2) gate_input(2,negative,g1)
-Optimization: 2 2
 Answer: 1
 gate_input(1,negative,g3) gate_input(2,negative,g1)
 Optimization: 2 2

@@ -217,7 +217,7 @@ def csv2asp(FnameCSV,
        f.writelines("\n".join(datafile))
 
     print " created:", FnameASP
-    print " now run: gringo %s | clasp --opt-mode=optN"%FnameASP
+    print " now run: gringo %s | clasp --opt-mode=optN --quiet=1"%FnameASP
 
 
 def gateinputs2pdf(FnamePDF, GateInputs):
