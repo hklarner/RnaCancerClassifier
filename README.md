@@ -20,9 +20,11 @@ where `g7` represents the expression of miRNA number seven, `+` means disjunctio
 #### types of constraints
 Currently we have implemented the following constraints:
 
- * upper bound for number of total inputs
- * upper bound of number of gates
- * specification of admissible _gate types_ in terms of upper bounds of the numbers of negated and non-negated inputs
+ * upper bound for _number of total inputs_
+ * upper bound of _number of gates_
+ * specification of admissible _gate types_ in terms of
+   * bounds on the numbers of negated and non-negated inputs and
+   * bound on occurences of a gate type in the classifier
  
 In practice it is desirable to compute classifiers with a minimal number of gates or inputs or both.
 We have implemented the following optimization strategies:
