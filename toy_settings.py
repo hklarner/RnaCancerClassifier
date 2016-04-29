@@ -52,13 +52,18 @@ if __name__=="__main__":
             EfficiencyConstraint,
             OptimizationStrategy)
             
-    if 1:
+    if 1 :
         GateInputs = "gate_input(1,negative,g1)"
         classifier.check_classifier(FnameCSV, GateInputs)
 
-    if 1:
+    if 1 :
         GateInputs = "gate_input(2,positive,g2) gate_input(1,negative,g1)"
         FnamePDF = "toy_classifier.pdf"
         classifier.gateinputs2pdf(FnamePDF, GateInputs)
+        
+    if 1 : 
+    	  FnameMAT = "toy_many_cancerous.mat"
+    	  Threshold = 250
+    	  classifier.mat2csv(FnameMAT, Threshold)
 
     
