@@ -217,6 +217,7 @@ The output informs you of all encountered inconsistencies (malfunctions):
    * **gateinputs2pdf** generates a graph-based drawing of a classifier
    * **gateinputs2function** used internally by _check\_classifier_
    * **check\_classifier** checks whether a given classifier is consistent with a given data file
+   * **mat2csv** converts a mat file into a csv file in the required format
  
  * [toy_data.csv](./toy_data.csv) an example of input data  
  * [toy_settings.py](./toy_settings.py) an example of parameters settings
