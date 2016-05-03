@@ -1,3 +1,4 @@
 
 
-w1 <- read.csv(file="results.csv",sep=",",head=TRUE)
+w1 <- read.csv(file="results.csv")
+print(w1)
