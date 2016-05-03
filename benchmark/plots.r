@@ -1,6 +1,6 @@
 library(lattice)
 
-data <- read.csv(file="results.csv", sep=" ")
+data <- read.csv(file="benchmark1_results.csv", sep=" ")
 print(data)
 
 rows <- data[1]
