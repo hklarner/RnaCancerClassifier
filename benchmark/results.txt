@@ -1,0 +1,3 @@
+
+rows  cols  healthy  time_first  time_all solutions   
+19    24    0.78     94s         1294s    112
