@@ -40,20 +40,23 @@ OptimizationStrategyMapping = {1:"minimize gates then minimize inputs",
                                4:"minimize gates"}
 
 def csv2asp(FnameCSV,
-        FnameASP,
-        UpperBoundInputs,
-        UpperBoundGates,
-        GateTypes,
-        EfficiencyConstraint,
-        OptimizationStrategy):
+            FnameASP,
+            UpperBoundInputs,
+            UpperBoundGates,
+            GateTypes,
+            EfficiencyConstraint,
+            OptimizationStrategy,
+            Silent=False
+            ):
 
-    print "\n--- csv2asp"
-    print " input file:", FnameCSV
-    print " upper bound on inputs:", UpperBoundInputs
-    print " upper bound on gates:", UpperBoundGates
-    print " gate types:", GateTypes
-    print " efficiency constraints:",EfficiencyConstraint
-    print " optimization strategy:",OptimizationStrategy, "(%s)"%OptimizationStrategyMapping[OptimizationStrategy]
+    if not Silent:
+        print "\n--- csv2asp"
+        print " input file:", FnameCSV
+        print " upper bound on inputs:", UpperBoundInputs
+        print " upper bound on gates:", UpperBoundGates
+        print " gate types:", GateTypes
+        print " efficiency constraints:",EfficiencyConstraint
+        print " optimization strategy:",OptimizationStrategy, "(%s)"%OptimizationStrategyMapping[OptimizationStrategy]
     
 
     with open(FnameCSV, 'rb') as f:
@@ -63,9 +66,9 @@ def csv2asp(FnameCSV,
         miRNAs = [x for x in header if not x in ["ID", "Annots"]]
         rows = [dict(zip(header,[y.strip() for y in x])) for x in reader]
 
-
-        print " miRNAs: ", len(miRNAs)
-        print " samples:", len(rows)
+        if not Silent:
+            print " miRNAs: ", len(miRNAs)
+            print " samples:", len(rows)
 
         datafile = [""]
         datafile+= ["% ASP constraints for computing a classifier (in this case a Boolean Function),"]
@@ -229,8 +232,9 @@ def csv2asp(FnameCSV,
     with open(FnameASP, 'w') as f:
        f.writelines("\n".join(datafile))
 
-    print " created:", FnameASP
-    print " now run: gringo %s | clasp --opt-mode=optN --quiet=1"%FnameASP
+    if not Silent:
+        print " created:", FnameASP
+        print " now run: gringo %s | clasp --opt-mode=optN --quiet=1"%FnameASP
 
 
 def gateinputs2pdf(FnamePDF, GateInputs):
