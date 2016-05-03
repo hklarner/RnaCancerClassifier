@@ -38,7 +38,8 @@ User input explained:
  Note: a classifier is the conjunction of disjunctive gates (CNF)
 """
 
-
+import sys
+sys.path = ["../"] + sys.path
 import classifier
 
 if __name__=="__main__":
