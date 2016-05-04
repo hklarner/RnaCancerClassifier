@@ -11,7 +11,7 @@ for rows in {10..12}
 do
    for cols in {10..12}
    do
-      for healthy in `seq 0.1 0.1 0.3`
+      for healthy in `LANG=en_US seq 0.1 0.1 0.3`
       do
          echo -n "working on rows=$rows cols=$cols healthy=$healthy ... "
          
