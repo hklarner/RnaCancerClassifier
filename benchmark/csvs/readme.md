@@ -1,2 +1,2 @@
 
-### This folder contains csv files that are created by the benchmarks
+### this folder is for storing csv and asp files that are created during the benchmarks
