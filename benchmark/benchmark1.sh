@@ -7,11 +7,11 @@ clasp='/home/klarner/Tools/Potassco/clasp-3.1.1/clasp-3.1.1-x86-linux'
 echo "rows cols healthy time_first time_all solutions" > benchmark1_results.csv
 
 
-for rows in `seq 10 10 20`
+for rows in `seq 10 10 500`
 do
-   for cols in `seq 10 10 20`
+   for cols in `seq 10 10 500`
    do
-      for healthy in `seq 0.1 0.1 0.3`
+      for healthy in `seq 0.3 0.3 0.9`
       do
          echo -n "working on rows=$rows cols=$cols healthy=$healthy ... "
          
