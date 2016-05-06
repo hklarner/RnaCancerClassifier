@@ -1,13 +1,21 @@
 
 
+   
+   
 #### Benchmark1: Random Matrix Experiments
-The script `benchmark1_step1.r` generates random binary matrices and stores them in files called ´csvs/matrix_<healthy>_<rows>x<columns>.csv`.
-It generates matrices with 10 to 100 rows and columns and tissues with a probability of being healthy that increase from 0.05 to 0.95 in steps of 0.05.
+The script `benchmark1.sh` loops over `rows` and `cols`, each increasing from 10 to 100, and `healthy`, which increases from 0.05 to 0.95 in steps of 0.05.
+For each combination of values it creates a random binary matrix and tissue annotation vector which is stored in `benchmark1_tmp.csv`.
+The script converts the data file into the asp file `benchmark1_tmp.asp` using the python script `benchmark1.py` and passes the result to gringo and clasp.
+If the asp problem is satisfiable it records all parameters and information about the CPU time to obtain the solutions and how many there are.
+The results are stored in `benchmark1_results.csv`.
 
-The script `benchmark1_step2.py` first generates an `asp` file for each random matrix of step 1 using the _Beerenwinkel settings_ (see file).
-It then calls gringo for each random data set and records various times and numbers in the file `benchmark1_results.csv`.
+Notes:
 
+   * unsatisfiable asp files are ignored
 
 #### Benchmark2: Random Classifier Experiments
+
+
+#### Benchmark3: Heike's Slices
 
 

@@ -1,11 +1,12 @@
 
 
-\documentclass[10pt]{beamer}
+\documentclass[10pt,dvipsnames]{beamer}
 
 %\usepackage{pgfpages}
 %\mode<handout>{\setbeamercolor{background canvas}{bg=black!20}}
 %\pgfpagesuselayout{4 on 1}[letterpaper,border shrink=5mm]
 
+\usepackage{lmodern}
 \usepackage{xcolor}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amsfonts}
@@ -17,20 +18,19 @@
 
 \usepackage{multimedia}
 
-\begin{document}
-
 \title{Cancer classification based on miRNA profiles using ASP} 
 \author{K.Becker and H. Klarner}
 \date{Berlin, Mai 2016}
-
 \institute{
 Freie Universität Berlin, Germany
 }
-
 % logo of my university
 \titlegraphic{\vfill\includegraphics[width=2cm]{FU-Logo}\hspace*{4.75cm}~%
    \includegraphics[width=2cm]{BMBF-Logo}
 }
+
+\begin{document}
+
 
 \frame{\titlepage}
 
@@ -38,13 +38,20 @@ Freie Universität Berlin, Germany
 %{\tiny R. Thomas. "Regulatory networks seen as asynchronous automata." JTB, 1991}
 
 
-
 \begin{frame}{Selective cell targeting}
 \begin{center}
-\includegraphics[scale=0.4]{cells.png}
+\colorbox{RoyalBlue!30}{ \textbf{Problem:} Discrimination of tumor from healthy tissues}
+
+\vspace{0.75cm}
+
+\only<1>{\includegraphics[scale=0.35]{cells.png}}
+\only<2>{\includegraphics[scale=0.35]{cells1.png}}
+
+\vspace{0.5cm}
+
+\visible<2>{\colorbox{RoyalBlue!30}{ \textbf{Idea:} Cells differ in miRNA profiles}}
 \end{center}
 \end{frame}
-
 
 
 \end{document}
