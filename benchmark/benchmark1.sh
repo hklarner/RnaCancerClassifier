@@ -1,4 +1,4 @@
-
+#!/bin/bash
 
 
 gringo='/home/klarner/Tools/Potassco/gringo-4.4.0-x86-linux/gringo'
@@ -7,16 +7,16 @@ clasp='/home/klarner/Tools/Potassco/clasp-3.1.1/clasp-3.1.1-x86-linux'
 echo "rows cols healthy time_first time_all solutions" > benchmark1_results.csv
 
 
-for rows in {10..12}
+for rows in `seq 10 10 20`
 do
-   for cols in {10..12}
+   for cols in `seq 10 10 20`
    do
-      for healthy in `LANG=en_US seq 0.1 0.1 0.3`
+      for healthy in `seq 0.1 0.1 0.3`
       do
          echo -n "working on rows=$rows cols=$cols healthy=$healthy ... "
          
-         echo "vector_index    = matrix(seq(1:$rows),$rows,1)"                                > benchmark1_tmp.r
-         echo "vector_annots   = matrix(rbinom($rows,1,$healthy),$rows,1)"                      >> benchmark1_tmp.r
+         echo "vector_index    = matrix(seq(1:$rows),$rows,1)"                               > benchmark1_tmp.r
+         echo "vector_annots   = matrix(rbinom($rows,1,$healthy),$rows,1)"                   >> benchmark1_tmp.r
          echo "matrix_profiles = matrix(sample(0:1,$rows*$cols, replace=TRUE),$rows,$cols)"  >> benchmark1_tmp.r
          echo 'matrix_complete = cbind(vector_index, vector_annots, matrix_profiles)'        >> benchmark1_tmp.r
          echo "miRNAs = sprintf(\"g%d\",seq(1:$cols))"                                       >> benchmark1_tmp.r
@@ -40,6 +40,9 @@ do
             echo "$rows $cols $healthy $time_first $time_all $solutions" >> benchmark1_results.csv
             echo "done."
          fi
+         
+         trap "echo Exited!; exit;" SIGINT SIGTERM
+         
       done
    done
 done
