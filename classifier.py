@@ -34,8 +34,8 @@ User input explained:
 """
 
 
-OptimizationStrategyMapping = {1:"minimize gates then minimize inputs",
-                               2:"minimize inputs then minimize gates",
+OptimizationStrategyMapping = {1:"minimize inputs then minimize gates",
+                               2:"minimize gates then minimize inputs",
                                3:"minimize inputs",
                                4:"minimize gates"}
 
@@ -206,16 +206,16 @@ def csv2asp(FnameCSV,
     datafile+= [":- tissue(TissueID,healthy), classifier(TissueID,cancer)."]
     datafile+= [":- tissue(TissueID,cancer),  classifier(TissueID,healthy)."]
     datafile+= [""]
-    
+
     if OptimizationStrategy==1:
-        datafile+= ["% optimization setup 1: first number of gates then number of inputs."]
-        datafile+= ["#minimize{ 1@1,GateID:gate_input(GateID,Sign,MiRNA) }."]
-        datafile+= ["#minimize{ 1@2,MiRNA: gate_input(GateID,Sign,MiRNA) }."]
-        
-    elif OptimizationStrategy==2:
         datafile+= ["% optimization setup 2: first number of inputs then number of gates."]
         datafile+= ["#minimize{ 1@1,MiRNA: gate_input(GateID,Sign,MiRNA) }."]
         datafile+= ["#minimize{ 1@2,GateID:gate_input(GateID,Sign,MiRNA) }."]
+        
+    elif OptimizationStrategy==2:
+        datafile+= ["% optimization setup 1: first number of gates then number of inputs."]
+        datafile+= ["#minimize{ 1@1,GateID:gate_input(GateID,Sign,MiRNA) }."]
+        datafile+= ["#minimize{ 1@2,MiRNA: gate_input(GateID,Sign,MiRNA) }."]
         
     elif OptimizationStrategy==3:
         datafile+= ["% optimization setup 3: only number of inputs."]
