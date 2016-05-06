@@ -37,6 +37,13 @@ do
             time_first=$(cat benchmark1_tmp.txt | sed -n 's?.*1st Model:[ ]*\([0-9.]\+\)s.*$?\1?p')
             time_all=$(cat benchmark1_tmp.txt | sed -n 's?[ ]*CPU Time[ ]*:[ ]*\([0-9.]\+\)s[ ]*$?\1?p')
             solutions=$(cat benchmark1_tmp.txt | sed -n 's?[ ]*Optimal[ ]*:[ ]*\([0-9]\+\)[ ]*$?\1?p')
+            
+            if [[ -z "$solutions" ]]
+            then
+               solutions=$(cat benchmark1_tmp.txt | sed -n 's?[ ]*Optimum[ ]*:[ ]*yes[ ]*$?1?p')
+               echo -n "exactly 1 solution"
+            fi
+            
             echo "$rows $cols $healthy $time_first $time_all $solutions" >> benchmark1_results.csv
             echo "done."
          fi

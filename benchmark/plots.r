@@ -28,7 +28,7 @@ update(p[rep(1, prod(npanel))], layout = npanel,
         panel.wireframe(..., screen = list(z = rotz[current.column()],
                                            x = rotx[current.row()]))})
 
-#time for calculating all soltions - number of solutions
+#time for calculating all solutions - number of solutions
 plot(time_all ~ solutions, data = data, main = "Generating all models", type="l", col="blue", xlab="number of solutions", ylab="time (s)", xlim=c(0,max(solutions)), ylim=c(0,max(time_all)), xaxp  = c(0, 100000, 20), yaxp  = c(0, 30000, 20), lwd=1.5)
 
 
