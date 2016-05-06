@@ -202,7 +202,7 @@ def csv2asp(FnameCSV,
     datafile+= ["classifier(TissueID, cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID)."]
     datafile+= [""]
 
-    datafile+= ["% the classifier mus agree with the tissue data."]
+    datafile+= ["% the classifier must agree with the tissue data."]
     datafile+= [":- tissue(TissueID,healthy), classifier(TissueID,cancer)."]
     datafile+= [":- tissue(TissueID,cancer),  classifier(TissueID,healthy)."]
     datafile+= [""]
