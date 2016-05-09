@@ -137,7 +137,7 @@ def csv2asp(FnameCSV,
     datafile+= ['is_sign(positive). is_sign(negative).']
     datafile+= [""]
     datafile+= ["% upper bound for total number of inputs"]
-    datafile+= ['upper_bound_total_inputs(%i).'%UpperBoundInputs]
+    datafile+= ['upper_bound_inputs(%i).'%UpperBoundInputs]
         
     datafile+= ['']
     datafile+= ['']
@@ -174,10 +174,14 @@ def csv2asp(FnameCSV,
     datafile+= ['%%%% Constraints %%%%']
     datafile+= ['% each gate must have at least one input']
     datafile+= ['1 {gate_input(GateID, Sign, MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).']
+
+    datafile+= ['']
+    datafile+= ['% inputs must be unique for a classifer']
+    datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate(GateID)} 1 :- is_mirna(MiRNA)."]
     
     datafile+= ['']
     datafile+= ['% the total number of inputs is bounded']
-    datafile+= ['{gate_input(GateID, Sign, MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} X :- upper_bound_total_inputs(X).']
+    datafile+= ['{gate_input(GateID,Sign,MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} X :- upper_bound_inputs(X).']
         
     datafile+= ['']
     datafile+= ['% the number of occurences of a gate type is bounded']
@@ -189,20 +193,16 @@ def csv2asp(FnameCSV,
     datafile+= ["gate_fires(GateID,TissueID) :- gate_input(GateID,negative,MiRNA), data(TissueID,MiRNA,low)."]
 
     datafile+= ['']
-    datafile+= ['% inputs must be unique for a classifer']
-    datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign),is_gate(GateID)} 1 :- is_mirna(MiRNA)."]
-    datafile+= ['']
-
     datafile+= ['% the classifier is a conjunction of all gate evaluations.']
     datafile+= ["classifier(TissueID, healthy) :- not gate_fires(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID)."]
     datafile+= ["classifier(TissueID, cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID)."]
-    datafile+= [""]
 
+    datafile+= ['']
     datafile+= ["% the classifier must agree with the tissue data."]
     datafile+= [":- tissue(TissueID,healthy), classifier(TissueID,cancer)."]
     datafile+= [":- tissue(TissueID,cancer),  classifier(TissueID,healthy)."]
-    datafile+= [""]
-
+    
+    datafile+= ['']
     if OptimizationStrategy==1:
         datafile+= ["% optimization setup 2: first number of inputs then number of gates."]
         datafile+= ["#minimize{ 1@1,MiRNA: gate_input(GateID,Sign,MiRNA) }."]
@@ -222,7 +222,7 @@ def csv2asp(FnameCSV,
         datafile+= ["#minimize{ 1,GateID:gate_input(GateID,Sign,MiRNA) }."]
            
     
-    datafile+= [""]
+    datafile+= ['']
     datafile+= ["#show gate_input/3."]
     
     with open(FnameASP, 'w') as f:
