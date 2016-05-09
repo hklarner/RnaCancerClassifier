@@ -96,6 +96,48 @@ Freie Universität Berlin, Germany
 \end{frame}
 
 
+\begin{frame}{Our encoding in ASP - Reminder}
+  \begin{itemize}
+  \item facts:
+ \end{itemize}
+ \begin{center}
+  \texttt{ P(A). }
+ \end{center}
+ 
+ \vspace{0.5cm} 
+   \begin{itemize}
+  \item conditional constraints:
+ \end{itemize}
+ \begin{center}
+  \texttt{ Q(A) :- P(A). }
+ \end{center}
+
+  \vspace{0.5cm} 
+  \begin{itemize}
+  \item count constraints:
+ \end{itemize}
+ \begin{center}
+  \texttt{ X \{ Q(A,B) \} Y. }
+ \end{center}
+
+ \vspace{0.5cm} 
+ \begin{itemize}
+  \item conditional count constraints:
+ \end{itemize}
+ \begin{center}
+  \texttt{ X \{ Q(A,B) \} Y :- P(A). }
+ \end{center}
+
+  \vspace{0.5cm} 
+  \begin{itemize}
+  \item integrity constraints:
+ \end{itemize}
+  \begin{center}
+  \texttt{ :- P(A). }
+ \end{center}
+\end{frame}
+
+
 \begin{frame}[fragile]{Input: Data}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
@@ -155,7 +197,7 @@ upper_bound_inputs(2).
 \end{frame}
 
 
-\begin{frame}[fragile]{Decision 1: Number of gates}
+\begin{frame}[fragile]{Decision 1: How many gates do we use?}
 \small
 \begin{verbatim}
 1 {number_of_gates(1..2)} 1.
@@ -167,7 +209,7 @@ is_gate_id(GateID) :- number_of_gates(X),is_integer(GateID),
 \end{frame}
 
 
-\begin{frame}[fragile]{Decision 2: Gate types}
+\begin{frame}[fragile]{Decision 2: What is the gate type of each gate?}
 \small
 \begin{verbatim}
 1 {gate_type(GateID, X) : is_gate_type(X)} 1 :- is_gate_id(GateID).
@@ -175,7 +217,7 @@ is_gate_id(GateID) :- number_of_gates(X),is_integer(GateID),
 \end{frame}
 
 
-\begin{frame}[fragile]{Decision 3: Inputs for each gate}
+\begin{frame}[fragile]{Decision 3: What are the inputs for our gates?}
 \small
 {\color{blue}{\large positive inputs:}}
 \begin{verbatim}
