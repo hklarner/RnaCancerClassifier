@@ -87,7 +87,7 @@ Freie Universität Berlin, Germany
  \item no more than 6 inputs attached to the AND gate
  \item no more than 3 inputs atttached to any OR gate
  \item no NOT gates attached to an OR gate
- \item no more than 2 OR gates
+ \item {\color{orange} no more than 2 OR gates}
  \item no more than 4 NOT gates
 \end{itemize}
 \begin{center}
@@ -239,80 +239,78 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 
 
 \begin{frame}[fragile]{Constraints}
- \begin{center}
-  \texttt{ X \{ Q(A,B) \} Y. }
- \end{center}
  \begin{itemize}
   \item count constraints
+  \item conditional count constraints
  \end{itemize}
  \vspace{1cm}
  \begin{center}
-  \texttt{ X \{ Q(A,B) \} Y :- P(A). }
+  \texttt{ X \{ Q(A,B) \} Y {\color{orange} :- P(A)}. }
  \end{center}
- \begin{itemize}
-  \item conditional count constraints
- \end{itemize}
+
 
 \end{frame}
 
 
-\begin{frame}[fragile]{Gates must have inputs}
- \texttt{1 \{gate\_input(GateID, Sign, MiRNA):}
- \begin{verbatim}
-  1 {gate_input(GateID, Sign, MiRNA):
-     is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).
- \end{verbatim}
+\begin{frame}{Gates must have inputs}
+ \texttt{
+ 1 \{gate\_input(GateID, Sign, MiRNA):\\
+  \quad {\color{gray} is\_sign(Sign), is\_mirna(MiRNA)}\} :- is\_gate\_id(GateID).
+ }
 \end{frame}
 
 
-\begin{frame}[fragile]{Inputs must be unique}
- \begin{verbatim}
-  {gate_input(GateID,Sign,MiRNA):
-    is_sign(Sign), is_gate(GateID)} 1 :- is_mirna(MiRNA).
- \end{verbatim}
+\begin{frame}{Inputs must be unique}
+ \texttt{
+  \{gate\_input(GateID,Sign,MiRNA):\\
+   \quad {\color{gray} is\_sign(Sign), is\_gate(GateID)}\} 1 :- is\_mirna(MiRNA).
+ }
 \end{frame}
 
 
-\begin{frame}[fragile]{Number of inputs is bounded}
- \begin{verbatim}
-  {gate_input(GateID, Sign, MiRNA):
-    is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} X :-
-  upper_bound_inputs(X).
- \end{verbatim}
+\begin{frame}{Number of inputs is bounded}
+ \texttt{
+  \{gate\_input(GateID,Sign,MiRNA):\\
+   \quad {\color{gray} is\_gate\_id(GateID), is\_sign(Sign), is\_mirna(MiRNA)}\} X :-\\
+   \quad upper\_bound\_inputs(X).
+ }
 \end{frame}
 
-\begin{frame}[fragile]{Occurences of gates}
- \begin{verbatim}
-  {gate_type(GateID,GateType):
-     is_gate_type(GateType),
-     is_gate_id(GateID)} X :-
-    upper_bound_gate_occurence(GateType,X).
- \end{verbatim}
+\begin{frame}{Occurences of gates}
+ \texttt{
+  \{gate\_type(GateID,GateType):{\color{gray}\;is\_gate\_id(GateID)}\} X :-\\
+     \quad is\_gate\_type(GateType),\\
+     \quad upper\_bound\_gate\_occurence(GateType,X).
+ }
 \end{frame}
  
 
-\begin{frame}[fragile]{Activity of gates}
- \begin{verbatim}
- gate_fires(GateID,TissueID) :-
-   gate_input(GateID,positive,MiRNA),
-   data(TissueID,MiRNA,high).
-   
- gate_fires(GateID,TissueID) :-
-   gate_input(GateID,negative,MiRNA),
-   data(TissueID,MiRNA,low).
- \end{verbatim}
+\begin{frame}{Activity of gates}
+ \texttt{
+ gate\_fires(GateID,TissueID) :-\\
+   \quad gate\_input(GateID,{\color{orange} positive},MiRNA),\\
+   \quad data(TissueID,MiRNA,{\color{orange} high}).\\
+ }
+ \vspace{1cm}
+ \texttt{
+ gate\_fires(GateID,TissueID) :-\\
+   \quad gate\_input(GateID,{\color{orange} negative},MiRNA),\\
+   \quad data(TissueID,MiRNA,{\color{orange} low}).
+ }
 \end{frame}
 
-\begin{frame}[fragile]{The classifier}
- \begin{verbatim}
-  classifier(TissueID, healthy) :-
-    not gate_fires(GateID, TissueID),
-    is_gate_id(GateID), is_tissue_id(TissueID).
-    
-  classifier(TissueID, cancer) :-
-    not classifier(TissueID, healthy),
-    is_tissue_id(TissueID).
- \end{verbatim}
+\begin{frame}{The classifier}
+ \texttt{
+  classifier(TissueID, healthy) :-\\
+    \quad not gate\_fires(GateID, TissueID),\\
+    \quad is\_gate\_id(GateID), is\_tissue\_id(TissueID).\\
+ }
+ \vspace{1cm}
+ \texttt{
+  classifier(TissueID, cancer) :-\\
+    \quad not classifier(TissueID, healthy),\\
+    \quad is\_tissue\_id(TissueID).
+ }
 \end{frame}
 
 
@@ -327,8 +325,7 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 
 \begin{frame}[fragile]{Single Objective}
  \begin{verbatim}
-  #minimize{ 1@1,GateID:gate_input(GateID,Sign,MiRNA) }.
-  #minimize{ 1@2,MiRNA: gate_input(GateID,Sign,MiRNA) }.
+  #minimize{ 1,GateID:gate_input(GateID,Sign,MiRNA) }.
  \end{verbatim}
 \end{frame}
 
@@ -339,7 +336,12 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
  \end{verbatim}
 \end{frame}
 
-
+\begin{frame}[fragile]{Weighted Sum}
+ \begin{verbatim}
+  #minimize{ 1@1,GateID:gate_input(GateID,Sign,MiRNA) }.
+  #minimize{ 8@1,MiRNA: gate_input(GateID,Sign,MiRNA) }.
+ \end{verbatim}
+\end{frame}
 \end{document}
 
  

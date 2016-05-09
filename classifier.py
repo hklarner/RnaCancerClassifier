@@ -185,7 +185,7 @@ def csv2asp(FnameCSV,
         
     datafile+= ['']
     datafile+= ['% the number of occurences of a gate type is bounded']
-    datafile+= ['{gate_type(GateID,GateType): is_gate_type(GateType), is_gate_id(GateID)} X :- upper_bound_gate_occurence(GateType,X).']
+    datafile+= ['{gate_type(GateID,GateType): is_gate_id(GateID)} X :- is_gate_type(GateType), upper_bound_gate_occurence(GateType,X).']
 
     datafile+= ['']
     datafile+= ['% gates are disjunctive (one active input suffices to activate gate)']
@@ -194,8 +194,8 @@ def csv2asp(FnameCSV,
 
     datafile+= ['']
     datafile+= ['% the classifier is a conjunction of all gate evaluations.']
-    datafile+= ["classifier(TissueID, healthy) :- not gate_fires(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID)."]
-    datafile+= ["classifier(TissueID, cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID)."]
+    datafile+= ["classifier(TissueID,healthy) :- not gate_fires(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID)."]
+    datafile+= ["classifier(TissueID,cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID)."]
 
     datafile+= ['']
     datafile+= ["% the classifier must agree with the tissue data."]
