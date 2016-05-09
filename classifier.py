@@ -24,7 +24,8 @@ User input explained:
    UpperBoundNeg = upper bound of negative inputs to gate
    UpperBoundOcc = upper bound of occurences of gate in classifier
  EfficiencyConstraint  = Katinka's efficiency constraints: positive (negative) inputs must be highly (lowly) expressed on some cancer tissue
- OptimizationStrategy  = 1..4
+ OptimizationStrategy  = 0..4
+   0 = no optimization
    1 = minimize number of gates, then minimize number of inputs
    2 = minimize number of inputs, then minimize number of gates
    3 = minimize number of inputs
@@ -34,7 +35,8 @@ User input explained:
 """
 
 
-OptimizationStrategyMapping = {1:"minimize inputs then minimize gates",
+OptimizationStrategyMapping = {0:"no optimization",
+                               1:"minimize inputs then minimize gates",
                                2:"minimize gates then minimize inputs",
                                3:"minimize inputs",
                                4:"minimize gates"}
@@ -152,7 +154,7 @@ def csv2asp(FnameCSV,
     datafile+= ['']
 
     if EfficiencyConstraint:
-        datafile+= ['% efficiency ON: restrict miRNA for inputs (requires the assumptionin that number of miRNAs is minimal)']
+        datafile+= ['% efficiency ON: restrict miRNA for inputs (requires the assumption that number of miRNAs is minimal)']
         datafile+= ['feasible_pos_miRNA(MiRNA) :- is_mirna(MiRNA), data(TissueID, MiRNA, high), tissue(TissueID,cancer).']
         datafile+= ['feasible_neg_miRNA(MiRNA) :- is_mirna(MiRNA), data(TissueID, MiRNA, low),  tissue(TissueID,cancer).']
 
@@ -163,7 +165,6 @@ def csv2asp(FnameCSV,
         
     else:
         datafile+= ['% efficiency OFF: unrestricted miRNAs for inputs']
-        datafile+= ['']
         datafile+= ['% Third decision: each gate is assigned a number of inputs']
         datafile+= ['X {gate_input(GateID, positive, MiRNA): is_mirna(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
         datafile+= ['X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
@@ -220,7 +221,8 @@ def csv2asp(FnameCSV,
     elif OptimizationStrategy==4:
         datafile+= ["% optimization setup 4: only number of gates."]
         datafile+= ["#minimize{ 1,GateID:gate_input(GateID,Sign,MiRNA) }."]
-           
+    elif OptimizationStrategy==0:
+        datafile+= ["% no optimization selected"]
     
     datafile+= ['']
     datafile+= ["#show gate_input/3."]
@@ -230,7 +232,10 @@ def csv2asp(FnameCSV,
 
     if not Silent:
         print " created:", FnameASP
-        print " now run: gringo %s | clasp --opt-mode=optN --quiet=1"%FnameASP
+        if OptimizationStrategy>0:
+            print " now run: gringo %s | clasp --opt-mode=optN --quiet=1"%FnameASP
+        else:
+            print " now run: gringo %s | clasp -n0"%FnameASP
 
 
 def gateinputs2pdf(FnamePDF, GateInputs):
