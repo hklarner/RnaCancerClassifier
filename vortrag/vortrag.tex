@@ -1,5 +1,3 @@
-
-
 \documentclass[10pt,dvipsnames]{beamer}
 
 %\usepackage{pgfpages}
@@ -47,21 +45,39 @@ Freie Universität Berlin, Germany
 \begin{itemize}
 \item \textbf{Problem:} Discrimination of tumor from healthy tissues
 \end{itemize}
-
 \vspace{0.5cm}
 \begin{center}
-\only<1>{\includegraphics[scale=0.25]{cells.png}}
-\only<2>{\includegraphics[scale=0.25]{cells1.png}}
+\includegraphics[scale=0.3]{cells1.png}
 \end{center}
 \vspace{0.5cm}
-
 \begin{itemize}
-\item<2> \textbf{Idea:} Cells differ in miRNA profiles
+\item \textbf{Idea:} Cells differ in miRNA profiles
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}{In vitro classification}
+\begin{frame}{In vitro classification - Biochemical circuits}
+\begin{itemize}
+\item synthesized in laboratory
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A boolean expression in conjunctive normal form (CNF)}
+\begin{itemize}
+\item conjunction (AND) of \emph{gates}
+\item each gate is a disjunction (OR) of literals
+\item \textbf{example:}  
+\begin{align*}
+(a + b + !c) * (d + e) * (!f)
+\end{align*}
+{\small $+$ means disjunction, $*$ means conjunction, $!$ means negation}
+\vspace{0.2cm}
+\item CNF evaluates to 1 (\emph{predicts cancer}) iff every gate evaluates to 1
+\end{itemize}
+\vspace{0.2cm}
+\begin{center}
+\includegraphics[scale=0.25]{classifier_exp.png}
+\end{center}
 \end{frame}
 
 
@@ -74,6 +90,9 @@ Freie Universität Berlin, Germany
 \item no more than 2 OR gates
 \item no more than 4 NOT gates
 \end{itemize}
+\begin{center}
+\includegraphics[scale=0.3]{classifier_max.png}
+\end{center}
 \end{frame}
 
 
