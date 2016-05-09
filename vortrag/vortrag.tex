@@ -182,19 +182,19 @@ is_mirna(Y) :- data(X,Y,Z).
 \begin{verbatim}
 is_gate_type(1..2).
 
-upper_bound_pos_inputs(gatetype1, 2).
-upper_bound_neg_inputs(gatetype1, 0).
-lower_bound_pos_inputs(gatetype1, 0).
-lower_bound_neg_inputs(gatetype1, 0).
-upper_bound_gate_occurence(gatetype1, 1).
+upper_bound_pos_inputs(type1, 2).
+upper_bound_neg_inputs(type1, 0).
+lower_bound_pos_inputs(type1, 0).
+lower_bound_neg_inputs(type1, 0).
+upper_bound_gate_occurence(type1, 1).
 
-upper_bound_pos_inputs(gatetype2, 0).
-upper_bound_neg_inputs(gatetype2, 1).
-lower_bound_pos_inputs(gatetype2, 0).
-lower_bound_neg_inputs(gatetype2, 0).
-upper_bound_gate_occurence(gatetype2, 2).
+upper_bound_pos_inputs(type2, 0).
+upper_bound_neg_inputs(type2, 1).
+lower_bound_pos_inputs(type2, 0).
+lower_bound_neg_inputs(type2, 0).
+upper_bound_gate_occurence(type2, 2).
 
-upper_bound_total_inputs(4).
+upper_bound_total_inputs(2).
 \end{verbatim}
 \end{frame}
 
@@ -290,15 +290,11 @@ gate_input(2,negative,g1).
 
 
 
-\begin{frame}{Constraints}
-
-\end{frame}
-
 
 \begin{frame}[fragile]{Safety: Gates must have inputs}
  \begin{columns}  
  \begin{column}{0.3\textwidth}
-  \begin{Verbatim}[fontsize=\scriptsize]
+  \begin{Verbatim}[fontsize=\small]
   is_gate_id(1). is_gate_id(2).
   gate_input(2,negative,g1).
  \end{Verbatim}
@@ -318,7 +314,7 @@ gate_input(2,negative,g1).
 \begin{frame}[fragile]{Inputs must be unique}
  \begin{columns}  
  \begin{column}{0.3\textwidth}
-  \begin{Verbatim}[fontsize=\scriptsize]
+  \begin{Verbatim}[fontsize=\small]
   is_gate_id(1). is_gate_id(2).
   gate_input(1,positive,g1).
   gate_input(2,negative,g1).
@@ -340,6 +336,9 @@ gate_input(2,negative,g1).
 \begin{frame}[fragile]{Number of inputs is bounded}
  \begin{columns}  
  \begin{column}{0.3\textwidth}
+  \begin{Verbatim}[fontsize=\small]
+  upper_bound_inputs(2).
+ \end{Verbatim}
  \end{column}
  \begin{column}{0.5\textwidth}
  \begin{center}\includegraphics[width=3cm]{constraints_03.png}\end{center}
@@ -353,26 +352,40 @@ gate_input(2,negative,g1).
  }
 \end{frame}
 
-\begin{frame}{Occurences of gates}
+\begin{frame}[fragile]{Occurences of gates}
+ \begin{columns}  
+ \begin{column}{0.5\textwidth}
+  \begin{Verbatim}[fontsize=\small]
+  gate_type(1,type1).
+  gate_type(2,type1).
+  upper_bound_gate_occurence(type1,1).
+ \end{Verbatim}
+ \end{column}
+ \begin{column}{0.5\textwidth}
+ \begin{center}\includegraphics[width=3cm]{constraints_04.png}\end{center}
+ \end{column}
+ \end{columns}
+ \vspace{2cm}
  \texttt{
   \{gate\_type(GateID,GateType):{\color{gray}\;is\_gate\_id(GateID)}\} X :-\\
-     \quad is\_gate\_type(GateType),\\
-     \quad upper\_bound\_gate\_occurence(GateType,X).
+     \quad upper\_bound\_gate\_occurence(GateType,X),\\ {\color{gray}
+     \quad is\_gate\_type(GateType)}.
  }
 \end{frame}
  
 
-\begin{frame}{Activity of gates}
+\begin{frame}[fragile]{Activity of gates}
+
  \texttt{
  gate\_fires(GateID,TissueID) :-\\
-   \quad gate\_input(GateID,{\color{orange} positive},MiRNA),\\
-   \quad data(TissueID,MiRNA,{\color{orange} high}).\\
+   \quad gate\_input(GateID,{\color{red} positive},MiRNA),\\
+   \quad data(TissueID,MiRNA,{\color{red} high}).\\
  }
  \vspace{1cm}
  \texttt{
  gate\_fires(GateID,TissueID) :-\\
-   \quad gate\_input(GateID,{\color{orange} negative},MiRNA),\\
-   \quad data(TissueID,MiRNA,{\color{orange} low}).
+   \quad gate\_input(GateID,{\color{red} negative},MiRNA),\\
+   \quad data(TissueID,MiRNA,{\color{red} low}).
  }
 \end{frame}
 
