@@ -130,9 +130,9 @@ def csv2asp(FnameCSV,
         datafile+= ["lower_bound_pos_inputs(type%i, %i)."%(x+1,gate_type["LowerBoundPos"])]
         datafile+= ["lower_bound_neg_inputs(type%i, %i)."%(x+1,gate_type["LowerBoundNeg"])]
         datafile+= ["upper_bound_gate_occurence(type%i, %i)."%(x+1,gate_type["UpperBoundOcc"])]
-        
+        datafile+= ['']
 
-    datafile+= [""]
+    datafile+= ['']
     datafile+= ["% each input may be positive or negative"]
     datafile+= ['is_sign(positive). is_sign(negative).']
     datafile+= [""]
@@ -177,7 +177,7 @@ def csv2asp(FnameCSV,
 
     datafile+= ['']
     datafile+= ['% inputs must be unique for a classifer']
-    datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate(GateID)} 1 :- is_mirna(MiRNA)."]
+    datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate_id(GateID)} 1 :- is_mirna(MiRNA)."]
     
     datafile+= ['']
     datafile+= ['% the total number of inputs is bounded']
