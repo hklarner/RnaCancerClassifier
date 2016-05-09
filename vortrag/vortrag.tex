@@ -81,17 +81,8 @@ Freie Universität Berlin, Germany
 \end{frame}
 
 
-\begin{frame}{}
-\begin{center}
-\includegraphics[scale=0.25]{classifier.png}
-\end{center}
-\[(g_1 + g_7 + g_8)\cdot(!g_5 + g_4)\cdot(g_7 + g_{10})\]
-\end{frame}
-
 \begin{frame}{Constraints from biology}
-\[(g_1 + g_7 + g_8)\cdot(!g_5 + g_4)\cdot(g_7 + g_{10})\]
 \begin{itemize}
- \item Conjunctive Normal Form (CNF)
  \item less than 10 inputs in total
  \item no more than 6 inputs attached to the AND gate
  \item no more than 3 inputs atttached to any OR gate
@@ -165,7 +156,6 @@ upper_bound_inputs(2).
 
 
 \begin{frame}[fragile]{Decision 1: Number of gates}
-\[(...)\cdot(...)\cdot(...)\]
 \small
 \begin{verbatim}
 1 {number_of_gates(1..2)} 1.
@@ -178,7 +168,6 @@ is_gate_id(GateID) :- number_of_gates(X),is_integer(GateID),
 
 
 \begin{frame}[fragile]{Decision 2: Gate types}
-\[(...)\cdot(...)\cdot(...)\]
 \small
 \begin{verbatim}
 1 {gate_type(GateID, X) : is_gate_type(X)} 1 :- is_gate_id(GateID).
