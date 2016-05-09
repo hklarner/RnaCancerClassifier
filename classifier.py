@@ -180,8 +180,8 @@ def csv2asp(FnameCSV,
     datafile+= ['{gate_input(GateID, Sign, MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} X :- upper_bound_total_inputs(X).']
         
     datafile+= ['']
-    datafile+= ['% the number of gates of a gate type is bounded']
-    datafile+= ['{gate_type(GateID,T): is_gate_type(T), is_gate_id(GateID)} X :- upper_bound_gate_type(T,X).']
+    datafile+= ['% the number of occurences of a gate type is bounded']
+    datafile+= ['{gate_type(GateID,GateType): is_gate_type(GateType), is_gate_id(GateID)} X :- upper_bound_gate_occurence(GateType,X).']
 
     datafile+= ['']
     datafile+= ['% gates are disjunctive (one active input suffices to activate gate)']
