@@ -15,6 +15,7 @@
 \usetikzlibrary{decorations.pathreplacing}
 \beamertemplatenavigationsymbolsempty
 \setbeamertemplate{footline}[frame number]
+\addtolength{\oddsidemargin}{-3pt}
 
 \definecolor{dgreen}{rgb}{0.,0.6,0.}
 \definecolor{highlight}{rgb}{0.,0.6,0.}
@@ -42,6 +43,7 @@ Freie Universität Berlin, Germany
 
 
 \begin{frame}{Selective cell targeting}
+\large
 \begin{itemize}
 \item \textbf{Problem:} Discrimination of tumor from healthy tissues
 \end{itemize}
@@ -75,7 +77,7 @@ Freie Universität Berlin, Germany
 \end{frame}
 
 
-\begin{frame}[fragile]{Input data}
+\begin{frame}[fragile]{Input: Data}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
@@ -98,22 +100,18 @@ ID&	Annots&	g1&	g2&	g3\\
 \vspace{0.2cm}
 \begin{verbatim}
 tissue(1,healthy). tissue(2,healthy). tissue(3,cancer).
-\end{verbatim}
-
-\begin{verbatim}
+ 
 data(1,g1,high). data(1,g2,high). data(1,g3,low).
 data(2,g1,low).  data(2,g2,low).  data(2,g3,high).
 data(3,g1,low).  data(3,g2,high). data(3,g3,low).
-\end{verbatim}
-
-\begin{verbatim}
+ 
 is_miRNA(Y) :- data(X,Y,Z).
 \end{verbatim}
 \end{frame}
 
 
 
-\begin{frame}[fragile]{Input classifier structure}
+\begin{frame}[fragile]{Input: Classifier structure}
 \begin{center}
 \includegraphics[scale=0.25]{classifier.png}
 \end{center}
@@ -121,20 +119,60 @@ is_miRNA(Y) :- data(X,Y,Z).
 
 \begin{verbatim}
 is_gate_type(1..2).
-\end{verbatim}
-
-\begin{verbatim}
+ 
 upper_bound_pos_inputs(1, 1). 
 upper_bound_neg_inputs(1, 0). 
 lower_bound_pos_inputs(1, 0). 
 lower_bound_neg_inputs(1, 0). 
 upper_bound_gate_type(1, 1). 
+ 
+upper_bound_total_inputs(2).
 \end{verbatim}
 
 \begin{tikzpicture}[overlay]
 \draw[decorate, decoration={brace}]
-      (6,2.6) -- node[right=0.15cm, scale=1] {\textbf{bounds for gate type 1}} (6,0.8);
+      (6,3.35) -- node[right=0.15cm, scale=1] {\textbf{bounds for gate type 1}} (6,1.35);
 \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[fragile]{Decision 1: Number of gates}
+\small
+\begin{verbatim}
+1 {number_of_gates(1..2)} 1.
+
+is_integer(1..2).
+is_gate_id(GateID) :- number_of_gates(X),is_integer(GateID), 
+                      GateID<=X.
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]{Decision 2: Gate types}
+\small
+\begin{verbatim}
+1 {gate_type(GateID, X) : is_gate_type(X)} 1 :- is_gate_id(GateID).
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]{Decision 3: Inputs for each gate}
+\small
+{\color{blue}{\large positive inputs:}}
+\begin{verbatim}
+X{gate_input(GateID,positive,MiRNA):feasible_pos_miRNA(MiRNA)}Y 
+   :-is_gate_id(GateID),gate_type(GateID,GateType),
+     lower_bound_pos_inputs(GateType,X), 
+     upper_bound_pos_inputs(GateType,Y).
+\end{verbatim}
+
+{\color{blue}{\large negative inputs:}}
+\begin{verbatim}
+X{gate_input(GateID,negative,MiRNA):feasible_neg_miRNA(MiRNA)}Y 
+   :-is_gate_id(GateID),gate_type(GateID,GateType),
+     lower_bound_neg_inputs(GateType,X),
+     upper_bound_neg_inputs(GateType,Y).
+\end{verbatim}
 \end{frame}
 
 
