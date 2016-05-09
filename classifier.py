@@ -115,7 +115,7 @@ def csv2asp(FnameCSV,
         datafile+= [""]
 
         datafile+= ['% for binding variables we need the "is_miRNA" predicate',
-                    "is_miRNA(Y) :- data(X,Y,Z).",
+                    "is_mirna(Y) :- data(X,Y,Z).",
                     ""]
 
     datafile+= ['']
@@ -125,11 +125,11 @@ def csv2asp(FnameCSV,
     datafile+= ["is_gate_type(1..%i)."%len(GateTypes)]
 
     for x, gate_type in enumerate(GateTypes):
-        datafile+= ["upper_bound_pos_inputs(%i, %i). %% GateType_%i"%(x+1,gate_type["UpperBoundPos"],x+1)]
-        datafile+= ["upper_bound_neg_inputs(%i, %i). %% GateType_%i"%(x+1,gate_type["UpperBoundNeg"],x+1)]
-        datafile+= ["lower_bound_pos_inputs(%i, %i). %% GateType_%i"%(x+1,gate_type["LowerBoundPos"],x+1)]
-        datafile+= ["lower_bound_neg_inputs(%i, %i). %% GateType_%i"%(x+1,gate_type["LowerBoundNeg"],x+1)]
-        datafile+= ["upper_bound_gate_type(%i, %i). %% GateType_%i"%(x+1,gate_type["UpperBoundOcc"],x+1)]
+        datafile+= ["upper_bound_pos_inputs(gatetype%i, %i)."%(x+1,gate_type["UpperBoundPos"])]
+        datafile+= ["upper_bound_neg_inputs(gatetype%i, %i)."%(x+1,gate_type["UpperBoundNeg"])]
+        datafile+= ["lower_bound_pos_inputs(gatetype%i, %i)."%(x+1,gate_type["LowerBoundPos"])]
+        datafile+= ["lower_bound_neg_inputs(gatetype%i, %i)."%(x+1,gate_type["LowerBoundNeg"])]
+        datafile+= ["upper_bound_gate_occurence(gatetype%i, %i)."%(x+1,gate_type["UpperBoundOcc"])]
         
 
     datafile+= [""]
@@ -153,8 +153,8 @@ def csv2asp(FnameCSV,
 
     if EfficiencyConstraint:
         datafile+= ['% efficiency ON: restrict miRNA for inputs (requires the assumptionin that number of miRNAs is minimal)']
-        datafile+= ['feasible_pos_miRNA(MiRNA) :- is_miRNA(MiRNA), data(TissueID, MiRNA, high), tissue(TissueID,cancer).']
-        datafile+= ['feasible_neg_miRNA(MiRNA) :- is_miRNA(MiRNA), data(TissueID, MiRNA, low),  tissue(TissueID,cancer).']
+        datafile+= ['feasible_pos_miRNA(MiRNA) :- is_mirna(MiRNA), data(TissueID, MiRNA, high), tissue(TissueID,cancer).']
+        datafile+= ['feasible_neg_miRNA(MiRNA) :- is_mirna(MiRNA), data(TissueID, MiRNA, low),  tissue(TissueID,cancer).']
 
         datafile+= ['']
         datafile+= ['% Third decision: each gate is assigned a number of inputs']
@@ -165,19 +165,19 @@ def csv2asp(FnameCSV,
         datafile+= ['% efficiency OFF: unrestricted miRNAs for inputs']
         datafile+= ['']
         datafile+= ['% Third decision: each gate is assigned a number of inputs']
-        datafile+= ['X {gate_input(GateID, positive, MiRNA): is_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
-        datafile+= ['X {gate_input(GateID, negative, MiRNA): is_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
+        datafile+= ['X {gate_input(GateID, positive, MiRNA): is_mirna(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
+        datafile+= ['X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
         
     
     datafile+= ['']
     datafile+= ['']
     datafile+= ['%%%% Constraints %%%%']
     datafile+= ['% each gate must have at least one input']
-    datafile+= ['1 {gate_input(GateID, Sign, MiRNA): is_sign(Sign), is_miRNA(MiRNA)} :- is_gate_id(GateID).']
+    datafile+= ['1 {gate_input(GateID, Sign, MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).']
     
     datafile+= ['']
     datafile+= ['% the total number of inputs is bounded']
-    datafile+= ['{gate_input(GateID, Sign, MiRNA): is_gate_id(GateID), is_sign(Sign), is_miRNA(MiRNA)} X :- upper_bound_total_inputs(X).']
+    datafile+= ['{gate_input(GateID, Sign, MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} X :- upper_bound_total_inputs(X).']
         
     datafile+= ['']
     datafile+= ['% the number of gates of a gate type is bounded']
@@ -189,13 +189,9 @@ def csv2asp(FnameCSV,
     datafile+= ["gate_evaluation(GateID,TissueID) :- gate_input(GateID,negative,MiRNA), data(TissueID,MiRNA,low)."]
 
     datafile+= ['']
-    datafile+= ['% inputs must not be positive and negative in the same gate']
-    datafile+= [":- gate_input(GateID,positive,MiRNA), gate_input(GateID,negative,MiRNA)."]
+    datafile+= ['% inputs must be unique for a classifer']
+    datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign),is_gate(GateID)} 1 :- is_mirna(MiRNA)."]
     datafile+= ['']
-    
-    datafile+= ['% an input cannot be used for two different gates']
-    datafile+= [":- gate_input(X,_,MiRNA), gate_input(Y,_,MiRNA), X<Y."]
-    datafile+= [""]
 
     datafile+= ['% the classifier is a conjunction of all gate evaluations.']
     datafile+= ["classifier(TissueID, healthy) :- not gate_evaluation(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID)."]
