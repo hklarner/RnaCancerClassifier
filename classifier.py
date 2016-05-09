@@ -122,14 +122,14 @@ def csv2asp(FnameCSV,
     datafile+= ['']
     datafile+= ['%%%% Classifier Structure %%%%']
     datafile+= ["% definition of gate types in terms of upper bounds on number of inputs"]
-    datafile+= ["is_gate_type(1..%i)."%len(GateTypes)]
 
     for x, gate_type in enumerate(GateTypes):
-        datafile+= ["upper_bound_pos_inputs(gatetype%i, %i)."%(x+1,gate_type["UpperBoundPos"])]
-        datafile+= ["upper_bound_neg_inputs(gatetype%i, %i)."%(x+1,gate_type["UpperBoundNeg"])]
-        datafile+= ["lower_bound_pos_inputs(gatetype%i, %i)."%(x+1,gate_type["LowerBoundPos"])]
-        datafile+= ["lower_bound_neg_inputs(gatetype%i, %i)."%(x+1,gate_type["LowerBoundNeg"])]
-        datafile+= ["upper_bound_gate_occurence(gatetype%i, %i)."%(x+1,gate_type["UpperBoundOcc"])]
+        datafile+= ["is_gate_type(type%i)."%(x+1)]
+        datafile+= ["upper_bound_pos_inputs(type%i, %i)."%(x+1,gate_type["UpperBoundPos"])]
+        datafile+= ["upper_bound_neg_inputs(type%i, %i)."%(x+1,gate_type["UpperBoundNeg"])]
+        datafile+= ["lower_bound_pos_inputs(type%i, %i)."%(x+1,gate_type["LowerBoundPos"])]
+        datafile+= ["lower_bound_neg_inputs(type%i, %i)."%(x+1,gate_type["LowerBoundNeg"])]
+        datafile+= ["upper_bound_gate_occurence(type%i, %i)."%(x+1,gate_type["UpperBoundOcc"])]
         
 
     datafile+= [""]
