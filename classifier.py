@@ -185,8 +185,8 @@ def csv2asp(FnameCSV,
 
     datafile+= ['']
     datafile+= ['% gates are disjunctive (one active input suffices to activate gate)']
-    datafile+= ["gate_evaluation(GateID,TissueID) :- gate_input(GateID,positive,MiRNA), data(TissueID,MiRNA,high)."]
-    datafile+= ["gate_evaluation(GateID,TissueID) :- gate_input(GateID,negative,MiRNA), data(TissueID,MiRNA,low)."]
+    datafile+= ["gate_fires(GateID,TissueID) :- gate_input(GateID,positive,MiRNA), data(TissueID,MiRNA,high)."]
+    datafile+= ["gate_fires(GateID,TissueID) :- gate_input(GateID,negative,MiRNA), data(TissueID,MiRNA,low)."]
 
     datafile+= ['']
     datafile+= ['% inputs must be unique for a classifer']
@@ -194,7 +194,7 @@ def csv2asp(FnameCSV,
     datafile+= ['']
 
     datafile+= ['% the classifier is a conjunction of all gate evaluations.']
-    datafile+= ["classifier(TissueID, healthy) :- not gate_evaluation(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID)."]
+    datafile+= ["classifier(TissueID, healthy) :- not gate_fires(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID)."]
     datafile+= ["classifier(TissueID, cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID)."]
     datafile+= [""]
 
