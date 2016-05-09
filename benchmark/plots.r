@@ -5,12 +5,12 @@ data <- read.csv(file="benchmark1_results.csv", sep=" ")
 no_na_data <- na.omit(data)
 print(no_na_data)
 
-rows <- data[1]
-cols <- data[2]
-healthy <- data[3]
-time_first <- data[4]
-time_all <- data[5]
-solutions <- data[6]
+rows <- no_na_data[1]
+cols <- no_na_data[2]
+healthy <- no_na_data[3]
+time_first <- no_na_data[4]
+time_all <- no_na_data[5]
+solutions <- no_na_data[6]
 
 
 #start plot axes in (0,0)
@@ -19,7 +19,16 @@ par(mgp=c(3,1,0))
 
 
 #rows - columns - time_first
-wireframe(time_first ~ cols * rows, data=no_na_data, main = "Generating first model", drape = TRUE, perspective=TRUE, colorkey=FALSE, xlab=list("number of columns", rot=35), ylab=list("number of rows", rot=-40), zlab="time (s)", xlim=c(min(cols),max(cols)), ylim=c(min(rows),max(rows)), zlim=c(min(time_first),max(time_first)), scales = list(arrows=FALSE,font = 0.3,tck = c(0.5, 0.5, 0.5),distance =c(2, 2, 2)),zoom = 0.6, cex.lab=0.05)
+#3D plot for healthy=0.3
+wireframe(time_first[healthy==0.3] ~ cols[healthy==0.3] * rows[healthy==0.3], data=no_na_data, main = "Generating first model (healthy==0.3)", drape = TRUE, perspective=TRUE, colorkey=FALSE, xlab=list("number of columns", rot=35), ylab=list("number of rows", rot=-40), zlab="time (s)", xlim=c(min(cols[healthy==0.3]),max(cols[healthy==0.3])), ylim=c(min(rows[healthy==0.3]),max(rows[healthy==0.3])), zlim=c(min(time_first[healthy==0.3]),max(time_first[healthy==0.3])), scales = list(arrows=FALSE,font = 0.3,tck = c(0.8, 0.8, 0.8),distance =c(1, 1, 1)),zoom = 0.8, cex.lab=0.05)
+
+
+#3D plot for healthy=0.6
+wireframe(time_first[healthy==0.6] ~ cols[healthy==0.6] * rows[healthy==0.6], data=no_na_data, main = "Generating first model (healthy==0.6)", drape = TRUE, perspective=TRUE, colorkey=FALSE, xlab=list("number of columns", rot=35), ylab=list("number of rows", rot=-40), zlab="time (s)", xlim=c(min(cols[healthy==0.6]),max(cols[healthy==0.6])), ylim=c(min(rows[healthy==0.6]),max(rows[healthy==0.6])), zlim=c(min(time_first[healthy==0.6]),max(time_first[healthy==0.6])), scales = list(arrows=FALSE,font = 0.3,tck = c(0.8, 0.8, 0.8),distance =c(1, 1, 1)),zoom = 0.8, cex.lab=0.05)
+
+
+#3D plot for healthy=0.9
+wireframe(time_first[healthy==0.9] ~ cols[healthy==0.9] * rows[healthy==0.9], data=no_na_data, main = "Generating first model (healthy==0.9)", drape = TRUE, perspective=TRUE, colorkey=FALSE, xlab=list("number of columns", rot=35), ylab=list("number of rows", rot=-40), zlab="time (s)", xlim=c(min(cols[healthy==0.9]),max(cols[healthy==0.9])), ylim=c(min(rows[healthy==0.9]),max(rows[healthy==0.9])), zlim=c(min(time_first[healthy==0.9]),max(time_first[healthy==0.9])), scales = list(arrows=FALSE,font = 0.3,tck = c(0.8, 0.8, 0.8),distance =c(1, 1, 1)),zoom = 0.8, cex.lab=0.05)
 
 
 #rows - columns - time_first (different angles)
@@ -38,6 +47,9 @@ plot(time_all ~ solutions, data = no_na_data, main = "Generating all models", ty
 
 
 #time for calculating first model - number of cols (number of rows fixed to 10)
-plot(time_first ~ cols, data = no_na_data, main = "Generating first model (number of rows = 10)", type="p", col="blue", xlab="number of columns", ylab="time (s)", xlim=c(min(cols),max(cols)), ylim=c(min(time_first),max(time_first)), xaxp  = c(0,max(cols), 20), yaxp  = c(0,round(max(time_all), digits=-2), 20), lwd=1.5)
+plot(time_first[rows==10] ~ cols[rows==10], data = no_na_data, main = "Generating first model (number of rows = 10)", type="p", col="blue", xlab="number of columns", ylab="time (s)", xlim=c(min(cols[rows==10]),max(cols[rows==10])), ylim=c(min(time_first[rows==10]),max(time_first[rows==10])), xaxp  = c(0,max(cols), 20), yaxp  = c(0,round(max(time_all), digits=-2), 20), lwd=1.5)
+
+#scatterplot - overview all variables
+plot(no_na_data)
 
 
