@@ -191,7 +191,7 @@ lower_bound_pos_inputs(type2, 0).
 lower_bound_neg_inputs(type2, 0).
 upper_bound_gate_occurence(type2, 2).
 
-upper_bound_total_inputs(2).
+upper_bound_total_inputs(4).
 \end{verbatim}
 \end{frame}
 
@@ -269,12 +269,12 @@ gate_input(2,negative,g1).
 
 \begin{Verbatim}
 X {gate_input(GateID,positive,MiRNA):is_mirna(MiRNA)} Y 
-   :-is_gate_id(GateID),gate_type(GateID,GateType),
+   :-gate_type(GateID,GateType),
      lower_bound_pos_inputs(GateType,X), 
      upper_bound_pos_inputs(GateType,Y).
 
 X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y 
-   :-is_gate_id(GateID),gate_type(GateID,GateType),
+   :-gate_type(GateID,GateType),
      lower_bound_neg_inputs(GateType,X),
      upper_bound_neg_inputs(GateType,Y).
 \end{Verbatim}
@@ -285,18 +285,27 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 
 \begin{frame}[fragile]{Safety: Gates must have inputs}
  \begin{columns}  
- \begin{column}{0.3\textwidth}
+ \begin{column}{0.5\textwidth}
+ \begin{center}\includegraphics[width=3cm]{constraints_01.png}\end{center}
  \color{my_example_color}
-  \begin{Verbatim}[fontsize=\small]
-  is_gate_id(1). is_gate_id(2).
+ \begin{Verbatim}[fontsize=\small]
+  is_gate_id(1).
+  is_gate_id(2).
   gate_input(2,negative,g1).
  \end{Verbatim}
  \end{column}
  \begin{column}{0.5\textwidth}
- \begin{center}\includegraphics[width=3cm]{constraints_01.png}\end{center}
+ \begin{center}\includegraphics[width=3cm]{constraints_02.png}\end{center}
+ \color{my_example_color}
+ \begin{Verbatim}[fontsize=\small]
+  is_gate_id(1).
+  is_gate_id(2).
+  gate_input(2,negative,g2).
+  gate_input(2,negative,g2).
+ \end{Verbatim}
  \end{column}
  \end{columns}
- \vspace{2cm}
+ \vspace{1cm}
  \texttt{
  1 \{gate\_input(GateID, Sign, MiRNA):\\
   \quad {\color{gray} is\_sign(Sign), is\_mirna(MiRNA)}\} :- is\_gate\_id(GateID).
@@ -306,19 +315,29 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 
 \begin{frame}[fragile]{Inputs must be unique}
  \begin{columns}  
- \begin{column}{0.3\textwidth}
+ \begin{column}{0.5\textwidth}
+ \begin{center}\includegraphics[width=3cm]{constraints_02.png}\end{center}
  \color{my_example_color}
   \begin{Verbatim}[fontsize=\small]
-  is_gate_id(1). is_gate_id(2).
-  gate_input(1,positive,g1).
-  gate_input(2,negative,g1).
+  is_mirna(g1). is_mirna(g2).
+  is_mirna(g3).
+  gate_input(1,positive,g2).
+  gate_input(2,negative,g2).
  \end{Verbatim}
  \end{column}
  \begin{column}{0.5\textwidth}
- \begin{center}\includegraphics[width=3cm]{constraints_02.png}\end{center}
+ \begin{center}\includegraphics[width=3cm]{constraints_03.png}\end{center}
+  \color{my_example_color}
+  \begin{Verbatim}[fontsize=\small]
+  is_mirna(g1). is_mirna(g2).
+  is_mirna(g3).
+  gate_input(1,positive,g1).
+  gate_input(2,positive,g2).
+  gate_input(2,negative,g3).
+ \end{Verbatim}
  \end{column}
  \end{columns}
- \vspace{2cm}
+ \vspace{1cm}
  \texttt{
   \{gate\_input(GateID,Sign,MiRNA):\\
    \quad {\color{gray} is\_sign(Sign), is\_gate(GateID)}\} 1 :- is\_mirna(MiRNA).
@@ -329,17 +348,31 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 
 \begin{frame}[fragile]{Number of inputs is bounded}
  \begin{columns}  
- \begin{column}{0.3\textwidth}
+ \begin{column}{0.5\textwidth}
+ \begin{center}\includegraphics[width=3cm]{constraints_04.png}\end{center}
  \color{my_example_color}
   \begin{Verbatim}[fontsize=\small]
   upper_bound_inputs(2).
+  gate_type(1,type1).
+  gate_type(2,type2).
+  gate_input(1,positive,g1).
+  gate_input(2,positive,g2).
+  gate_input(2,negative,g3).
  \end{Verbatim}
  \end{column}
  \begin{column}{0.5\textwidth}
- \begin{center}\includegraphics[width=3cm]{constraints_03.png}\end{center}
+ \begin{center}\includegraphics[width=3cm]{constraints_05.png}\end{center}
+ \color{my_example_color}
+  \begin{Verbatim}[fontsize=\small]
+  upper_bound_inputs(2).
+  gate_type(1,type1).
+  gate_type(2,type1).
+  gate_input(1,positive,g1).
+  gate_input(2,positive,g2).
+ \end{Verbatim}
  \end{column}
  \end{columns}
- \vspace{2cm}
+ \vspace{1cm}
  \texttt{
   \{gate\_input(GateID,Sign,MiRNA):\\
    \quad {\color{gray} is\_gate\_id(GateID), is\_sign(Sign), is\_mirna(MiRNA)}\} X :-\\
@@ -349,28 +382,40 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 
 \begin{frame}[fragile]{Occurences of gates}
  \begin{columns}  
- \begin{column}{0.5\textwidth}
+ \begin{column}{0.6\textwidth}
+ \begin{center}\includegraphics[width=3cm]{constraints_05.png}\end{center}
  \color{my_example_color}
   \begin{Verbatim}[fontsize=\small]
+  upper_bound_gate_occurence(type1, 1).
+  upper_bound_inputs(2).
   gate_type(1,type1).
   gate_type(2,type1).
-  upper_bound_gate_occurence(type1,1).
+  gate_input(1,positive,g1).
+  gate_input(2,positive,g2).
  \end{Verbatim}
  \end{column}
- \begin{column}{0.5\textwidth}
- \begin{center}\includegraphics[width=3cm]{constraints_04.png}\end{center}
+ \begin{column}{0.6\textwidth}
+ \begin{center}\includegraphics[width=3cm]{constraints_06.png}\end{center}
+ \color{my_example_color}
+  \begin{Verbatim}[fontsize=\small]
+  upper_bound_gate_occurence(type1, 1).
+  upper_bound_inputs(2).
+  gate_type(1,type1).
+  gate_type(2,type2).
+  gate_input(1,positive,g1).
+  gate_input(2,negative,g2).
+ \end{Verbatim}
  \end{column}
  \end{columns}
- \vspace{2cm}
+ \vspace{1cm}
  \texttt{
   \{gate\_type(GateID,GateType):{\color{gray}\;is\_gate\_id(GateID)}\} X :-\\
-     \quad upper\_bound\_gate\_occurence(GateType,X),\\ {\color{gray}
-     \quad is\_gate\_type(GateType)}.
+     \quad upper\_bound\_gate\_occurence(GateType,X).
  }
 \end{frame}
  
 
-\begin{frame}[fragile]{Activity of gates}
+\begin{frame}[fragile]{Consistency of gates with data}
 
  \texttt{
  gate\_fires(GateID,TissueID) :-\\
@@ -385,7 +430,7 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
  }
 \end{frame}
 
-\begin{frame}{The classifier}
+\begin{frame}{Consistency of classifier with gates}
  \texttt{
   classifier(TissueID, healthy) :-\\
     \quad not gate\_fires(GateID, TissueID),\\
@@ -399,6 +444,12 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
  }
 \end{frame}
 
+\begin{frame}[fragile]{Consistency of classifier with data}
+ \begin{verbatim}
+  :- tissue(TissueID,healthy), classifier(TissueID,cancer).
+  :- tissue(TissueID,cancer),  classifier(TissueID,healthy).
+ \end{verbatim}
+\end{frame}
 
 
 \begin{frame}{Optimization}
