@@ -416,27 +416,55 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
  
 
 \begin{frame}[fragile]{Consistency of gates with data}
-
+ \begin{columns}  
+ \begin{column}{0.3\textwidth}
+ \includegraphics[width=3cm]{constraints_06.png}
+ \end{column}
+ \begin{column}{0.6\textwidth}
+ \begin{tabular}{|c|c|c|c|c|c|c|}
+  \hline
+  ID&	Annots&	g1&	g2&	g3& gate1& gate2\\
+  \hline
+  1&	0&	1&	1&	0& 1& 0\\
+  2&	0&	0&	0&	1& 0& 1\\
+  3&	1&	0&	1&	0& 0& 0\\
+  \hline
+ \end{tabular}
+ \end{column}
+ \end{columns}
+ \vspace{1.5cm}
  \texttt{
  gate\_fires(GateID,TissueID) :-\\
    \quad gate\_input(GateID,{\color{red} positive},MiRNA),\\
    \quad data(TissueID,MiRNA,{\color{red} high}).\\
  }
- \vspace{1cm}
- \texttt{
- gate\_fires(GateID,TissueID) :-\\
-   \quad gate\_input(GateID,{\color{red} negative},MiRNA),\\
-   \quad data(TissueID,MiRNA,{\color{red} low}).
- }
+ 
 \end{frame}
 
-\begin{frame}{Consistency of classifier with gates}
+\begin{frame}[fragile]{Consistency of classifier with gates}
+ \begin{columns}  
+ \begin{column}{0.25\textwidth}
+ \includegraphics[width=3cm]{constraints_06.png}
+ \end{column}
+ \begin{column}{0.8\textwidth}
+ \begin{tabular}{|c|c|c|c|c|c|c|c|}
+  \hline
+  ID&	Annots&	g1&	g2&	g3& gate1& gate2& classifier\\
+  \hline
+  1&	0&	1&	1&	0& 1& 0& healthy\\
+  2&	0&	0&	0&	1& 0& 1& healthy\\
+  3&	1&	0&	1&	0& 0& 0& healthy\\
+  \hline
+ \end{tabular}
+ \end{column}
+ \end{columns}
+ \vspace{1.5cm}
  \texttt{
   classifier(TissueID, healthy) :-\\
     \quad not gate\_fires(GateID, TissueID),\\
     \quad is\_gate\_id(GateID), is\_tissue\_id(TissueID).\\
  }
- \vspace{1cm}
+ \vspace{0.3cm}
  \texttt{
   classifier(TissueID, cancer) :-\\
     \quad not classifier(TissueID, healthy),\\
@@ -445,40 +473,55 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 \end{frame}
 
 \begin{frame}[fragile]{Consistency of classifier with data}
- \begin{verbatim}
+ \begin{columns}  
+ \begin{column}{0.25\textwidth}
+ \includegraphics[width=3cm]{constraints_07.png}
+ \color{my_example_color}
+  \begin{Verbatim}[fontsize=\small]
+  gate_input(1,positive,g2).
+  gate_input(2,negative,g1).
+  \end{Verbatim}
+ \end{column}
+ \begin{column}{0.8\textwidth}
+ \begin{tabular}{|c|c|c|c|c|c|c|c|}
+  \hline
+  ID&	Annots&	g1&	g2&	g3& gate1& gate2& classifier\\
+  \hline
+  1&	0&	1&	1&	0& 1& 0& healthy\\
+  2&	0&	0&	0&	1& 0& 1& healthy\\
+  3&	1&	0&	1&	0& 1& 1& cancer\\
+  \hline
+ \end{tabular}
+ \end{column}
+ \end{columns}
+ \vspace{1.5cm}
+  \begin{verbatim}
   :- tissue(TissueID,healthy), classifier(TissueID,cancer).
   :- tissue(TissueID,cancer),  classifier(TissueID,healthy).
  \end{verbatim}
 \end{frame}
 
 
-\begin{frame}{Optimization}
+
+\begin{frame}[fragile]{Optimization}
  \begin{itemize}
   \item single objective
-  \item with priorities
-  \item weighted sum
- \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Single Objective}
- \begin{verbatim}
+  \begin{verbatim}
   #minimize{ 1,GateID:gate_input(GateID,Sign,MiRNA) }.
  \end{verbatim}
-\end{frame}
-
-\begin{frame}[fragile]{Priorities}
- \begin{verbatim}
+  \item with priorities
+  \begin{verbatim}
   #minimize{ 1@1,GateID:gate_input(GateID,Sign,MiRNA) }.
   #minimize{ 1@2,MiRNA: gate_input(GateID,Sign,MiRNA) }.
  \end{verbatim}
-\end{frame}
-
-\begin{frame}[fragile]{Weighted Sum}
- \begin{verbatim}
+  \item weighted sum
+  \begin{verbatim}
   #minimize{ 1@1,GateID:gate_input(GateID,Sign,MiRNA) }.
   #minimize{ 8@1,MiRNA: gate_input(GateID,Sign,MiRNA) }.
  \end{verbatim}
+ \end{itemize}
 \end{frame}
+
 
 \begin{frame}{Summary}
  \begin{itemize}
