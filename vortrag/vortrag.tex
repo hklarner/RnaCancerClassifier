@@ -202,10 +202,11 @@ upper_bound_total_inputs(4).
 \begin{minipage}{0.45\textwidth}
 \color{my_example_color}
 \begin{verbatim}
-number_of_gates(2).
+number_of_gates(3).
 
 is_gate_id(1).
 is_gate_id(2).
+is_gate_id(3).
 \end{verbatim}
 
 \end{minipage}
@@ -229,15 +230,16 @@ is_gate_id(GateID) :- number_of_gates(X),is_integer(GateID),
 
 \begin{frame}[fragile]{Decision 2: What is the gate type of each gate?}
 \small
-\begin{minipage}{0.45\textwidth}
+\begin{minipage}{0.3\textwidth}
 \color{my_example_color}
 \begin{verbatim}
 gate_type(1, type1).
-gate_type(2, type2).
+gate_type(2, type1).
+gate_type(3, type2).
 \end{verbatim}
 \end{minipage}
 \hfill
-\begin{minipage}{0.45\textwidth}
+\begin{minipage}{0.6\textwidth}
 \begin{center}
 \includegraphics[scale=0.3]{exp2.png}
 \end{center}
@@ -255,8 +257,13 @@ gate_type(2, type2).
 \begin{minipage}{0.45\textwidth}
 \color{my_example_color}
 \begin{verbatim}
+gate_input(1,positive,g1).
 gate_input(1,positive,g2).
-gate_input(2,negative,g1).
+
+gate_input(2,positive,g2).
+gate_input(2,positive,g3).
+
+gate_input(3,negative,g1).
 \end{verbatim}
 \end{minipage}
 \hfill
@@ -547,27 +554,18 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 \end{frame}
 
 \begin{frame}{Time for generating first model}
-\begin{minipage}{0.5\textwidth}
-\includegraphics[scale=0.2]{first_healthy03.jpg}
-\end{minipage}
-\begin{minipage}{0.4\textwidth}
-\includegraphics[scale=0.2]{first_healthy06.jpg}
-\end{minipage}
+\only<1>{
 \begin{center}
-\includegraphics[scale=0.2]{first_healthy09.jpg}
-\end{center}
-\end{frame}
-
-\begin{frame}{Time for generating all models}
-\begin{minipage}{0.5\textwidth}
-\includegraphics[scale=0.2]{all_healthy03.jpg}
-\end{minipage}
-\begin{minipage}{0.4\textwidth}
-\includegraphics[scale=0.2]{all_healthy06.jpg}
-\end{minipage}
+\includegraphics[scale=0.4]{first_healthy03.jpg}
+\end{center}}
+\only<2>{
 \begin{center}
-\includegraphics[scale=0.2]{all_healthy09.jpg}
-\end{center}
+\includegraphics[scale=0.4]{first_healthy06.jpg}
+\end{center}}
+\only<3>{
+\begin{center}
+\includegraphics[scale=0.4]{first_healthy09.jpg}
+\end{center}}
 \end{frame}
 
 \begin{frame}{Summary}
