@@ -166,8 +166,8 @@ def csv2asp(FnameCSV,
     else:
         datafile+= ['% efficiency OFF: unrestricted miRNAs for inputs']
         datafile+= ['% Third decision: each gate is assigned a number of inputs']
-        datafile+= ['X {gate_input(GateID, positive, MiRNA): is_mirna(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
-        datafile+= ['X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
+        datafile+= ['X {gate_input(GateID, positive, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
+        datafile+= ['X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
         
     
     datafile+= ['']
@@ -186,7 +186,7 @@ def csv2asp(FnameCSV,
         
     datafile+= ['']
     datafile+= ['% the number of occurences of a gate type is bounded']
-    datafile+= ['{gate_type(GateID,GateType): is_gate_id(GateID)} X :- is_gate_type(GateType), upper_bound_gate_occurence(GateType,X).']
+    datafile+= ['{gate_type(GateID,GateType): is_gate_id(GateID)} X :- upper_bound_gate_occurence(GateType,X).']
 
     datafile+= ['']
     datafile+= ['% gates are disjunctive (one active input suffices to activate gate)']
