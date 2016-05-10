@@ -283,7 +283,7 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 
 
 
-\begin{frame}[fragile]{Safety: Gates must have inputs}
+\begin{frame}[fragile]{Gates must have inputs}
  \begin{columns}  
  \begin{column}{0.5\textwidth}
  \begin{center}\includegraphics[width=3cm]{constraints_01.png}\end{center}
@@ -300,7 +300,7 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
  \begin{Verbatim}[fontsize=\small]
   is_gate_id(1).
   is_gate_id(2).
-  gate_input(2,negative,g2).
+  gate_input(1,positive,g2).
   gate_input(2,negative,g2).
  \end{Verbatim}
  \end{column}
@@ -387,7 +387,6 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
  \color{my_example_color}
   \begin{Verbatim}[fontsize=\small]
   upper_bound_gate_occurence(type1, 1).
-  upper_bound_inputs(2).
   gate_type(1,type1).
   gate_type(2,type1).
   gate_input(1,positive,g1).
@@ -399,7 +398,6 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
  \color{my_example_color}
   \begin{Verbatim}[fontsize=\small]
   upper_bound_gate_occurence(type1, 1).
-  upper_bound_inputs(2).
   gate_type(1,type1).
   gate_type(2,type2).
   gate_input(1,positive,g1).
@@ -570,21 +568,37 @@ X {gate_input(GateID,negative,MiRNA):is_mirna(MiRNA)} Y
 \end{center}
 \end{frame}
 
+
 \begin{frame}{Summary}
  \begin{itemize}
-  \item 
-  
- \end{itemize}
-
+  \item enumerate Boolean expressions that agree with partial truth table
+  \item biologically motivated constraints:
+  \begin{itemize}
+   \item expression is in CNF
+   \item bounds on number of inputs and gates
+   \item definition of gates types with bounds on positive and negative inputs and on occurrences   
+  \end{itemize}
+  \item optimization by single objective, priorities and weighted sums
+  \end{itemize}
 \end{frame}
 
 
 
-\begin{frame}{Remarks}
- \begin{itemize}
-  \item mapping \texttt{GateID} to \texttt{GateType}: how to break symmetries?
- \end{itemize}
-
+\begin{frame}[fragile]{Breaking Symmetries?}
+ \vfill
+ \begin{verbatim}
+    Answer: 1
+    gate_input(1,negative,g3) gate_input(2,negative,g1)
+    
+    Answer: 2
+    gate_input(1,positive,g2) gate_input(2,negative,g1)
+    
+    Answer: 3
+    gate_input(2,negative,g3) gate_input(1,negative,g1)
+    
+    Answer: 4
+    gate_input(2,positive,g2) gate_input(1,negative,g1)
+ \end{verbatim}
 \end{frame}
 
 \end{document}
