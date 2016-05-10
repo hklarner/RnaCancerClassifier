@@ -155,8 +155,8 @@ def csv2asp(FnameCSV,
 
     if EfficiencyConstraint:
         datafile+= ['% efficiency ON: restrict miRNA for inputs (requires the assumption that number of miRNAs is minimal)']
-        datafile+= ['feasible_pos_miRNA(MiRNA) :- is_mirna(MiRNA), data(TissueID, MiRNA, high), tissue(TissueID,cancer).']
-        datafile+= ['feasible_neg_miRNA(MiRNA) :- is_mirna(MiRNA), data(TissueID, MiRNA, low),  tissue(TissueID,cancer).']
+        datafile+= ['feasible_pos_miRNA(MiRNA) :- data(TissueID, MiRNA, high), tissue(TissueID,cancer).']
+        datafile+= ['feasible_neg_miRNA(MiRNA) :- data(TissueID, MiRNA, low),  tissue(TissueID,cancer).']
 
         datafile+= ['']
         datafile+= ['% Third decision: each gate is assigned a number of inputs']
