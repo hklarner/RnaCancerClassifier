@@ -160,8 +160,8 @@ def csv2asp(FnameCSV,
 
         datafile+= ['']
         datafile+= ['% Third decision: each gate is assigned a number of inputs']
-        datafile+= ['X {gate_input(GateID, positive, MiRNA): feasible_pos_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
-        datafile+= ['X {gate_input(GateID, negative, MiRNA): feasible_neg_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']
+        datafile+= ['X {gate_input(GateID, positive, MiRNA): feasible_pos_miRNA(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
+        datafile+= ['X {gate_input(GateID, negative, MiRNA): feasible_neg_miRNA(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']
         
     else:
         datafile+= ['% efficiency OFF: unrestricted miRNAs for inputs']
