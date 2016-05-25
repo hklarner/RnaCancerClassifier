@@ -1,14 +1,12 @@
 
-| Name          | Description                         | Results |
-| ------------- | ----------------------------------- | ------- |
-| casestudy01   | cancerous tissue < healthy tissue   |         |
-| casestudy02   | cancerous tissue = healthy tissue   |         |
-| casestudy03   | cancerous tissue > healthy tissue   |         |
-| casestudy04   | optimization strategy matter        |         |
+This folder contains example datasets and settings files.
+
+#### C2.csv, ..., C5.csv
+Four example datasets.
 
 
-#### Casestudy04
-It makes a difference whether you optimize for gates first and then for inputs or the other way around.
+#### optimization_matters.csv
+This dataset illustrates that it makes a difference whether you optimize for gates first and then for inputs or the other way around.
 
 First gates then inputs:
 
