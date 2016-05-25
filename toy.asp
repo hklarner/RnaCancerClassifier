@@ -6,11 +6,11 @@
 % written by K. Becker and H. Klarner, March 2016, FU Berlin.
 
 % InputFile = toy.csv
-%  upper bound on inputs: 2
+%  upper bound on inputs: 10
 %  upper bound on gates: 2
-%  gate types: [{'UpperBoundOcc': 1, 'LowerBoundNeg': 0, 'UpperBoundNeg': 0, 'LowerBoundPos': 0, 'UpperBoundPos': 1}, {'UpperBoundOcc': 2, 'LowerBoundNeg': 0, 'UpperBoundNeg': 1, 'LowerBoundPos': 0, 'UpperBoundPos': 0}]
-%  efficiency constraints: True
-%  optimization strategy: 2  (minimize gates then minimize inputs)
+%  gate types: [{'UpperBoundOcc': 1, 'LowerBoundNeg': 0, 'UpperBoundNeg': 0, 'LowerBoundPos': 0, 'UpperBoundPos': 2}, {'UpperBoundOcc': 2, 'LowerBoundNeg': 0, 'UpperBoundNeg': 1, 'LowerBoundPos': 0, 'UpperBoundPos': 0}]
+%  efficiency constraints: False
+%  optimization strategy: 1  (minimize inputs then minimize gates)
 
 % the tissue data, a tissue ID followed by either "cancer" or "healthy"
 tissue(1,healthy). tissue(2,healthy). tissue(3,cancer).
@@ -29,23 +29,26 @@ is_mirna(Y) :- data(X,Y,Z).
 
 %%%% Classifier Structure %%%%
 % definition of gate types in terms of upper bounds on number of inputs
-is_gate_type(1..2).
-upper_bound_pos_inputs(gatetype1, 1).
-upper_bound_neg_inputs(gatetype1, 0).
-lower_bound_pos_inputs(gatetype1, 0).
-lower_bound_neg_inputs(gatetype1, 0).
-upper_bound_gate_occurence(gatetype1, 1).
-upper_bound_pos_inputs(gatetype2, 0).
-upper_bound_neg_inputs(gatetype2, 1).
-lower_bound_pos_inputs(gatetype2, 0).
-lower_bound_neg_inputs(gatetype2, 0).
-upper_bound_gate_occurence(gatetype2, 2).
+is_gate_type(type1).
+upper_bound_pos_inputs(type1, 2).
+upper_bound_neg_inputs(type1, 0).
+lower_bound_pos_inputs(type1, 0).
+lower_bound_neg_inputs(type1, 0).
+upper_bound_gate_occurence(type1, 1).
+
+is_gate_type(type2).
+upper_bound_pos_inputs(type2, 0).
+upper_bound_neg_inputs(type2, 1).
+lower_bound_pos_inputs(type2, 0).
+lower_bound_neg_inputs(type2, 0).
+upper_bound_gate_occurence(type2, 2).
+
 
 % each input may be positive or negative
 is_sign(positive). is_sign(negative).
 
 % upper bound for total number of inputs
-upper_bound_total_inputs(2).
+upper_bound_inputs(10).
 
 
 %%%% Decisions %%%%
@@ -57,42 +60,39 @@ is_gate_id(GateID) :- number_of_gates(X), is_integer(GateID), GateID<=X.
 % Second decision: each gates is assigned a gate type
 1 {gate_type(GateID, X): is_gate_type(X)} 1 :- is_gate_id(GateID).
 
-% efficiency ON: restrict miRNA for inputs (requires the assumptionin that number of miRNAs is minimal)
-feasible_pos_miRNA(MiRNA) :- is_mirna(MiRNA), data(TissueID, MiRNA, high), tissue(TissueID,cancer).
-feasible_neg_miRNA(MiRNA) :- is_mirna(MiRNA), data(TissueID, MiRNA, low),  tissue(TissueID,cancer).
-
+% efficiency OFF: unrestricted miRNAs for inputs
 % Third decision: each gate is assigned a number of inputs
-X {gate_input(GateID, positive, MiRNA): feasible_pos_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).
-X {gate_input(GateID, negative, MiRNA): feasible_neg_miRNA(MiRNA)} Y :- is_gate_id(GateID), gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).
+X {gate_input(GateID, positive, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).
+X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).
 
 
 %%%% Constraints %%%%
 % each gate must have at least one input
 1 {gate_input(GateID, Sign, MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).
 
-% the total number of inputs is bounded
-{gate_input(GateID, Sign, MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} X :- upper_bound_total_inputs(X).
+% inputs must be unique for a classifer
+{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate_id(GateID)} 1 :- is_mirna(MiRNA).
 
-% the number of gates of a gate type is bounded
-{gate_type(GateID,T): is_gate_type(T), is_gate_id(GateID)} X :- upper_bound_gate_type(T,X).
+% the total number of inputs is bounded
+{gate_input(GateID,Sign,MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} X :- upper_bound_inputs(X).
+
+% the number of occurences of a gate type is bounded
+{gate_type(GateID,GateType): is_gate_id(GateID)} X :- upper_bound_gate_occurence(GateType,X).
 
 % gates are disjunctive (one active input suffices to activate gate)
-gate_evaluation(GateID,TissueID) :- gate_input(GateID,positive,MiRNA), data(TissueID,MiRNA,high).
-gate_evaluation(GateID,TissueID) :- gate_input(GateID,negative,MiRNA), data(TissueID,MiRNA,low).
-
-% inputs must be unique for a classifer
-{gate_input(GateID,Sign,MiRNA): is_sign(Sign),is_gate(GateID)} 1 :- is_mirna(MiRNA).
+gate_fires(GateID,TissueID) :- gate_input(GateID,positive,MiRNA), data(TissueID,MiRNA,high).
+gate_fires(GateID,TissueID) :- gate_input(GateID,negative,MiRNA), data(TissueID,MiRNA,low).
 
 % the classifier is a conjunction of all gate evaluations.
-classifier(TissueID, healthy) :- not gate_evaluation(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID).
-classifier(TissueID, cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID).
+classifier(TissueID,healthy) :- not gate_fires(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID).
+classifier(TissueID,cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID).
 
 % the classifier must agree with the tissue data.
 :- tissue(TissueID,healthy), classifier(TissueID,cancer).
 :- tissue(TissueID,cancer),  classifier(TissueID,healthy).
 
-% optimization setup 1: first number of gates then number of inputs.
-#minimize{ 1@1,GateID:gate_input(GateID,Sign,MiRNA) }.
-#minimize{ 1@2,MiRNA: gate_input(GateID,Sign,MiRNA) }.
+% optimization setup 2: first number of inputs then number of gates.
+#minimize{ 1@1,MiRNA: gate_input(GateID,Sign,MiRNA) }.
+#minimize{ 1@2,GateID:gate_input(GateID,Sign,MiRNA) }.
 
 #show gate_input/3.
