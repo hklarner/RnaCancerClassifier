@@ -49,14 +49,24 @@ def csv2rows(FnameCSV):
 
     with open(FnameCSV, 'rb') as f:
         reader = csv.reader(f, delimiter=",")
-        header = reader.next()
-        header = [x.strip() for x in header]
+        for x in reader:
+            if not x:continue
+            header = x
+            header = [x.strip() for x in header]
+            break
+        
         miRNAs = [x for x in header if not x in ["ID", "Annots"]]
 
+        IDs = set([])
         rows = []
         for x in reader:
             if not x: continue
+            if not x[0].strip(): continue
             newrow = dict(zip(header,[y.strip() for y in x]))
+            if newrow["ID"] in IDs:
+                print "\n***ERROR: row IDs must be unique, found duplicate (%s)."%newrow["ID"]
+                raise Exception
+            IDs.add(newrow["ID"])
             rows.append(newrow)
 
     return miRNAs, rows
@@ -368,9 +378,6 @@ def gateinputs2function(GateInputs):
 
     return function
                         
-        
-        
-
     
 
 def check_classifier(FnameCSV, GateInputs):
@@ -407,8 +414,37 @@ def check_classifier(FnameCSV, GateInputs):
         print " result = classifier and data are consistent"
         
         
-       
-       
+
+def check_csv(FnameCSV):
+    """
+    counts how many miRNAs are constant across all samples, and
+    checks if there are inconsistencies in the data (identical miRNA profile but different annotation)    
+    """
+
+    print "\n--- check_csv"
+
+    miRNAs, rows = csv2rows(FnameCSV)
+    print " miRNAs: ", len(miRNAs)
+    print " samples:", len(rows)
+    
+    inconsistencies = []
+    seen = []
+    for x in rows:
+        for y in seen:
+            if all(x[rna]==y[rna] for rna in miRNAs):
+                if x["Annots"]!=y["Annots"]:
+                    inconsistencies.append(x["ID"])
+        seen.append(x)
+
+    constants = []
+    for rna in miRNAs:
+        value = rows[0][rna]
+        if all(x[rna]==value for x in rows):
+            constants.append(rna)
+    
+    print " inconsistencies (%i): %s"%(len(inconsistencies),",".join(inconsistencies) or "-")
+    print " constants (%i): %s"%(len(constants),",".join(constants) or "-")
+
        
 def mat2csv(FnameMAT, Threshold):
 	"""

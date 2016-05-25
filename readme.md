@@ -207,7 +207,11 @@ The output informs you of all encountered inconsistencies (malfunctions):
  result = 1 inconsistencies set(['2'])
 ```
 
-
+#### check csv data
+To check whether there are _inconsistencies_ or _constants_ in the data call the function `classifier.check_csv`.
+It lists all miRNAs that are constant across all samples, i.e., always _high_ or always _low_,
+and checks if there are profiles that are identical in terms of the miRNA profile but differ w.r.t. to the annotation.
+If there are inconsistencies then there is no classifier.
 
 
 ## Files
