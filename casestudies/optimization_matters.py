@@ -12,7 +12,7 @@ GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":3,
               "LowerBoundNeg":0,"UpperBoundNeg":1,
               "UpperBoundOcc":4}]
 EfficiencyConstraint = True
-OptimizationStrategy = 1
+OptimizationStrategy = 0
 
 """
 User input explained:
