@@ -41,6 +41,27 @@ OptimizationStrategyMapping = {0:"no optimization",
                                3:"minimize inputs",
                                4:"minimize gates"}
 
+
+def csv2rows(FnameCSV):
+    """
+    Converts a csv file to a list of dictionaries.
+    """
+
+    with open(FnameCSV, 'rb') as f:
+        reader = csv.reader(f, delimiter=",")
+        header = reader.next()
+        header = [x.strip() for x in header]
+        miRNAs = [x for x in header if not x in ["ID", "Annots"]]
+
+        rows = []
+        for x in reader:
+            if not x: continue
+            newrow = dict(zip(header,[y.strip() for y in x]))
+            rows.append(newrow)
+
+    return miRNAs, rows
+
+    
 def csv2asp(FnameCSV,
             FnameASP,
             UpperBoundInputs,
@@ -61,64 +82,59 @@ def csv2asp(FnameCSV,
         print " optimization strategy:",OptimizationStrategy, "(%s)"%OptimizationStrategyMapping[OptimizationStrategy]
     
 
-    with open(FnameCSV, 'rb') as f:
-        reader = csv.reader(f, delimiter=",")
-        header = reader.next()
-        header = [x.strip() for x in header]
-        miRNAs = [x for x in header if not x in ["ID", "Annots"]]
-        rows = [dict(zip(header,[y.strip() for y in x])) for x in reader]
+    miRNAs, rows = csv2rows(FnameCSV)
 
-        if not Silent:
-            print " miRNAs: ", len(miRNAs)
-            print " samples:", len(rows)
+    if not Silent:
+        print " miRNAs: ", len(miRNAs)
+        print " samples:", len(rows)
 
-        datafile = [""]
-        datafile+= ["% ASP constraints for computing a classifier (in this case a Boolean Function),"]
-        datafile+= ["% that agrees with given tissue data (either cancerous or healthy) and"]
-        datafile+= ["% and satisfies certain structural constraints."]
-        datafile+= ["% Note: a classifier is the conjunction of disjunctive gates (CNF)"]
-        datafile+= ["% written by K. Becker and H. Klarner, March 2016, FU Berlin."]
-        datafile+= [""]
-        datafile+= ["%% InputFile = %s"%FnameCSV]
-        datafile+= ["%%  upper bound on inputs: %i"%UpperBoundInputs]
-        datafile+= ["%%  upper bound on gates: %i"%UpperBoundGates]
-        datafile+= ["%%  gate types: %s"%str(GateTypes)]
-        datafile+= ["%%  efficiency constraints: %s"%str(EfficiencyConstraint)]
-        datafile+= ["%%  optimization strategy: %i  (%s)"%(OptimizationStrategy,OptimizationStrategyMapping[OptimizationStrategy])]
-        datafile+= [""]
-                    
-        datafile+= ['% the tissue data, a tissue ID followed by either "cancer" or "healthy"']
-        dummy = []
-        for x in rows:
-            y = "healthy" if x["Annots"]=="0" else "cancer"
-            dummy.append( "tissue(%s,%s)."%(x["ID"],y) )
+    datafile = [""]
+    datafile+= ["% ASP constraints for computing a classifier (in this case a Boolean Function),"]
+    datafile+= ["% that agrees with given tissue data (either cancerous or healthy) and"]
+    datafile+= ["% and satisfies certain structural constraints."]
+    datafile+= ["% Note: a classifier is the conjunction of disjunctive gates (CNF)"]
+    datafile+= ["% written by K. Becker and H. Klarner, March 2016, FU Berlin."]
+    datafile+= [""]
+    datafile+= ["%% InputFile = %s"%FnameCSV]
+    datafile+= ["%%  upper bound on inputs: %i"%UpperBoundInputs]
+    datafile+= ["%%  upper bound on gates: %i"%UpperBoundGates]
+    datafile+= ["%%  gate types: %s"%str(GateTypes)]
+    datafile+= ["%%  efficiency constraints: %s"%str(EfficiencyConstraint)]
+    datafile+= ["%%  optimization strategy: %i  (%s)"%(OptimizationStrategy,OptimizationStrategyMapping[OptimizationStrategy])]
+    datafile+= [""]
+                
+    datafile+= ['% the tissue data, a tissue ID followed by either "cancer" or "healthy"']
+    dummy = []
+    for x in rows:
+        y = "healthy" if x["Annots"]=="0" else "cancer"
+        dummy.append( "tissue(%s,%s)."%(x["ID"],y) )
+        if sum(map(len,dummy))>100:
+            datafile+= [" ".join(dummy)]
+            dummy = []
+                
+    datafile+= [" ".join(dummy)]
+    datafile+= [""]
+
+    datafile+= ['% for binding variables we need the "is_tissue_id" predicate',
+                "is_tissue_id(X) :- tissue(X,Y).",
+                ""]
+
+    datafile+= ['% the miRNA data, a tissue ID and miRNA ID followed by either "high" or "low"']
+    dummy = []
+    for x in rows:
+        for miRNA in miRNAs:
+            y = "high" if x[miRNA]=="1" else "low"
+            dummy.append("data(%s,%s,%s)."%(x["ID"],miRNA,y))
             if sum(map(len,dummy))>100:
                 datafile+= [" ".join(dummy)]
                 dummy = []
-                    
-        datafile+= [" ".join(dummy)]
-        datafile+= [""]
+                
+    datafile+= [" ".join(dummy)]
+    datafile+= [""]
 
-        datafile+= ['% for binding variables we need the "is_tissue_id" predicate',
-                    "is_tissue_id(X) :- tissue(X,Y).",
-                    ""]
-
-        datafile+= ['% the miRNA data, a tissue ID and miRNA ID followed by either "high" or "low"']
-        dummy = []
-        for x in rows:
-            for miRNA in miRNAs:
-                y = "high" if x[miRNA]=="1" else "low"
-                dummy.append("data(%s,%s,%s)."%(x["ID"],miRNA,y))
-                if sum(map(len,dummy))>100:
-                    datafile+= [" ".join(dummy)]
-                    dummy = []
-                    
-        datafile+= [" ".join(dummy)]
-        datafile+= [""]
-
-        datafile+= ['% for binding variables we need the "is_miRNA" predicate',
-                    "is_mirna(Y) :- data(X,Y,Z).",
-                    ""]
+    datafile+= ['% for binding variables we need the "is_miRNA" predicate',
+                "is_mirna(Y) :- data(X,Y,Z).",
+                ""]
 
     datafile+= ['']
     datafile+= ['']
@@ -365,28 +381,22 @@ def check_classifier(FnameCSV, GateInputs):
     """
     print "\n--- check_classifier"
 
-    
+    miRNAs, rows = csv2rows(FnameCSV)
+
+    print " miRNAs: ", len(miRNAs)
+    print " samples:", len(rows)
+
+    function = gateinputs2function(GateInputs)
+    print " testing each sample against the function.."
     hits = set([])
-    with open(FnameCSV, 'rb') as f:
-        reader = csv.reader(f, delimiter=",")
-        header = reader.next()
-        header = [x.strip() for x in header]
-        miRNAs = [x for x in header if not x in ["ID", "Annots"]]
-        rows = [dict(zip(header,[y.strip() for y in x])) for x in reader]
-
-        print " miRNAs: ", len(miRNAs)
-        print " samples:", len(rows)
-
-        function = gateinputs2function(GateInputs)
-        print " testing each sample against the function.."
-        for x in rows:
-            malfunction = function(x)
-            if malfunction:
-                hits.add(x["ID"])
-                for location in malfunction:
-                    print " ** found malfunction:"
-                    for item in sorted(location.items()):
-                        print "    %s = %s"%item
+    for x in rows:
+        malfunction = function(x)
+        if malfunction:
+            hits.add(x["ID"])
+            for location in malfunction:
+                print " ** found malfunction:"
+                for item in sorted(location.items()):
+                    print "    %s = %s"%item
                     
 
     print " classifier =",GateInputs

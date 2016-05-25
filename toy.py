@@ -29,7 +29,8 @@ User input explained:
    UpperBoundNeg = upper bound of negative inputs to gate
    UpperBoundOcc = upper bound of occurences of gate in classifier
  EfficiencyConstraint  = Katinka's efficiency constraints: positive (negative) inputs must be highly (lowly) expressed on some cancer tissue
- OptimizationStrategy  = 1..4
+ OptimizationStrategy  = 0..4
+   0 = no optimization
    1 = minimize number of gates, then minimize number of inputs
    2 = minimize number of inputs, then minimize number of gates
    3 = minimize number of inputs
