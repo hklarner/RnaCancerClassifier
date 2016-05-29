@@ -264,9 +264,12 @@ def csv2asp(FnameCSV,
     
     datafile+= ['']
     datafile+= ["#show gate_input/3."]
-    
-    with open(FnameASP, 'w') as f:
-       f.writelines("\n".join(datafile))
+
+    if FnameASP==None:
+        return "\n".join(datafile)
+    else:
+        with open(FnameASP, 'w') as f:
+           f.writelines("\n".join(datafile))
 
     if not Silent:
         print " created:", FnameASP
@@ -276,17 +279,17 @@ def csv2asp(FnameCSV,
             print " now run: gringo %s | clasp -n0"%FnameASP
 
 
-def gateinputs2pdf(FnamePDF, GateInputs):
+def gateinputs2pdf(FnamePDF, GateInputs, Silent=False):
     """
     Example for GateInputs:
 
     gate_input(1,positive,g189) gate_input(1,positive,g224) gate_input(2,positive,g89) gate_input(2,positive,g108) gate_input(2,positive,g154) gate_input(3,negative,g31)
     """
-    print "\n--- gateinputs2pdf"
 
     GateInputs = GateInputs.strip()
     GateInputs = GateInputs.split()
-    print " found %i inputs:"%len(GateInputs),GateInputs
+
+    
     
     GateInputs = [x[x.find("(")+1:-1].split(",") for x in GateInputs]
 
@@ -317,7 +320,11 @@ def gateinputs2pdf(FnamePDF, GateInputs):
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate( input=dotfile )
     proc.stdin.close()
-    print " created", FnamePDF
+
+    if not Silent:
+        print "\n--- gateinputs2pdf"
+        print " found %i inputs:"%len(GateInputs),GateInputs
+        print " created", FnamePDF
 
 
 def gateinputs2function(GateInputs):
@@ -554,10 +561,104 @@ def mat2csv(FnameMAT, Threshold):
 	print " created: "+str(FnameMAT[:-4])+"_binary.csv"
 
 
- 
+def pilot(Parameters, FnamePaths=None):
+    """
+    This function creates a ASP file, calls gringo and clasp and returns a list of classifiers in "gate_input" format.
+    """
+
+    if not FnamePaths:
+        FnamePaths = "paths.cfg"
+        
+
+    import os
+    import subprocess
+    import ConfigParser
+    
+
+    if not os.path.exists(FnamePaths):
+        
+        print FnamePaths, "does not exist."
+        s=["[Executables]",
+           "gringo          = /usr/bin/gringo",
+           "clasp           = /usr/bin/clasp"]
+        s='\n'.join(s)
+        
+        with open(FnamePaths,"w") as f:
+            f.writelines(s)
+            
+        print "created",FnamePaths
+        print "please check paths and run again."
+        return
+
+    
+    config = ConfigParser.SafeConfigParser()
+    config.read( os.path.join(FnamePaths) )
+    CMD_GRINGO = config.get("Executables", "gringo")
+    CMD_CLASP  = config.get("Executables", "clasp")
+
+    params_clasp = []
+    if Parameters["OptimizationStrategy"]>=1:
+        params_clasp = ["--quiet=1", "--opt-mode=optN"]
+    else:
+        params_clasp = ["-n0"]
+
+    Parameters["FnameASP"] = None
+    aspfile = csv2asp(**Parameters)
+
+    try:
+        cmd_gringo = [CMD_GRINGO]
+        proc_gringo = subprocess.Popen(cmd_gringo, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cmd_clasp  = [CMD_CLASP] + params_clasp
+        proc_clasp  = subprocess.Popen(cmd_clasp,  stdin=proc_gringo.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        proc_gringo.stdin.write( aspfile )
+        proc_gringo.stdin.close()
+
+        output, error = proc_clasp.communicate()
+
+    except Exception as Ex:
+        print Ex
+        msg = "\nCall to gringo and / or clasp failed."
+        if FnameASP!=None:
+            msg+= '\ncommand: "%s"'%' '.join(cmd_gringo+['|']+cmd_clasp)
+        print msg
+        raise Ex
+
+    if error:
+        print error
+        msg = "\nCall to gringo and / or clasp failed."
+        if FnameASP!=None:
+            msg+= '\ncommand: "%s"'%' '.join(cmd_gringo+['|']+cmd_clasp)
+        print msg
+        raise Exception
+
+
+    hit = False
+    answers = []
+    for line in output.split('\n'):
+
+        if "gate_input" in line:
+            if hit:
+                print ">> ANSER OVER SEVERAL LINES! REQURIES BUGFIX"
+            else:
+                hit = True
+                answers+=[line]
+        else:
+            hit = False
+        
+    return answers
+
+
+
+
+
+
+
+    
  
  
  
 
 if __name__=="__main__":
     print "nothing to do"
+
