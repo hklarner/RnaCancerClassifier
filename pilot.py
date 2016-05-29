@@ -1,8 +1,7 @@
 
 
 
-FnameCSV = "toy.csv"
-FnameASP = "toy.asp"
+
 LowerBoundInputs = 0
 UpperBoundInputs = 10
 LowerBoundGates  = 0
@@ -24,10 +23,14 @@ if __name__=="__main__":
     
     if 1:    
         # creates an image for each answer
-        
+        FnameCSV = "toy.csv"
+
+        print
+        print "Example for pilot:"
+    
         parameters = {
             "FnameCSV":FnameCSV,
-            "FnameASP":FnameASP,
+            "FnameASP":None,
             "LowerBoundInputs":LowerBoundInputs,
             "UpperBoundInputs":UpperBoundInputs,
             "LowerBoundGates":LowerBoundGates,
@@ -41,18 +44,19 @@ if __name__=="__main__":
         answers = classifier.pilot(parameters)
         
         for i,x in enumerate(answers):
-            FnamePDF = "answer%i.pdf"%i
+            FnamePDF = " toy_%i.pdf"%i
             classifier.gateinputs2pdf(FnamePDF, x, Silent=True)
-            print "created", FnamePDF
+            print " created", FnamePDF
 
-        print "answers:", len(answers)
+        print " answers:", len(answers)
             
         
     if 1:
         # slices
+        FnameCSV = "casestudies/C2_corrected.csv"
 
         print
-        print "Slices (fixed number of inputs and gates):"
+        print "Example for slices (fixed number of inputs and gates):"
         print " Format: (Inputs, Gates, Answers)"
         hit = False
         for x in range(1,UpperBoundInputs+1):
@@ -62,7 +66,7 @@ if __name__=="__main__":
                 
                 parameters = {
                     "FnameCSV":FnameCSV,
-                    "FnameASP":FnameASP,
+                    "FnameASP":None,
 
                     # slice:
                     "LowerBoundInputs": x,

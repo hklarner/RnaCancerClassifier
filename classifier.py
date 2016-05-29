@@ -641,7 +641,6 @@ def pilot(Parameters, FnamePaths=None):
         print msg
         raise Exception
 
-
     hit = False
     answers = []
     for line in output.split('\n'):
