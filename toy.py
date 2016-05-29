@@ -3,7 +3,9 @@
 
 FnameCSV = "toy.csv"
 FnameASP = "toy.asp"
+LowerBoundInputs = 0
 UpperBoundInputs = 10
+LowerBoundGates  = 0
 UpperBoundGates  = 2
 GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":2,
               "LowerBoundNeg":0,"UpperBoundNeg":0,
@@ -23,7 +25,9 @@ if __name__=="__main__":
         classifier.csv2asp(
             FnameCSV,
             FnameASP,
+            LowerBoundInputs,
             UpperBoundInputs,
+            LowerBoundGates,
             UpperBoundGates,
             GateTypes,
             EfficiencyConstraint,

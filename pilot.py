@@ -3,7 +3,9 @@
 
 FnameCSV = "toy.csv"
 FnameASP = "toy.asp"
+LowerBoundInputs = 0
 UpperBoundInputs = 10
+LowerBoundGates  = 0
 UpperBoundGates  = 2
 GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":2,
               "LowerBoundNeg":0,"UpperBoundNeg":0,
@@ -15,40 +17,20 @@ EfficiencyConstraint = False
 OptimizationStrategy = 1
 BreakSymmetries = True
 
-"""
-User input explained:
-
- FnameCSV              = CSV data file (0/1 matrix, tissue samples = rows)
-  Header               = ID, Annots, g1, g2, g3, ... (ID:sampleid, Annots:0=healthy/1=cancer, g1:0=low expression/1=high expression)
- FnameASP              = ASP filename that is generated
- UpperBoundInputs      = upper bound for total number of inputs for classifier
- UpperBoundGates       = upper bount for number of gates
- GateTypes             = a gate type is defined in terms of
-   LowerBoundPos = lower bound of positive inputs to gate
-   UpperBoundPos = upper bound of positive inputs to gate
-   LowerBoundNeg = lower bound of negative inputs to gate
-   UpperBoundNeg = upper bound of negative inputs to gate
-   UpperBoundOcc = upper bound of occurences of gate in classifier
- EfficiencyConstraint  = Katinka's efficiency constraints: positive (negative) inputs must be highly (lowly) expressed on some cancer tissue
- OptimizationStrategy  = 0..4
-   0 = no optimization
-   1 = minimize number of gates, then minimize number of inputs
-   2 = minimize number of inputs, then minimize number of gates
-   3 = minimize number of inputs
-   4 = minimize number of gates
-
- Note: a classifier is the conjunction of disjunctive gates (CNF)
-"""
-
 
 import classifier
 
 if __name__=="__main__":
-    if 1:
+    
+    if 1:    
+        # creates an image for each answer
+        
         parameters = {
             "FnameCSV":FnameCSV,
             "FnameASP":FnameASP,
+            "LowerBoundInputs":LowerBoundInputs,
             "UpperBoundInputs":UpperBoundInputs,
+            "LowerBoundGates":LowerBoundGates,
             "UpperBoundGates":UpperBoundGates,
             "GateTypes":GateTypes,
             "EfficiencyConstraint":EfficiencyConstraint,
@@ -66,5 +48,62 @@ if __name__=="__main__":
         print "answers:", len(answers)
             
         
+    if 1:
+        # slices
 
+        print
+        print "Slices (fixed number of inputs and gates):"
+        print " Format: (Inputs, Gates, Answers)"
+        hit = False
+        for x in range(1,UpperBoundInputs+1):
+            if hit: break
+            for y in range(1, min(x+1,UpperBoundGates+1) ):
+                if hit: break
+                
+                parameters = {
+                    "FnameCSV":FnameCSV,
+                    "FnameASP":FnameASP,
+
+                    # slice:
+                    "LowerBoundInputs": x,
+                    "UpperBoundInputs": x,
+                    "LowerBoundGates":  y,
+                    "UpperBoundGates":  y,
+                    
+                    "GateTypes":GateTypes,
+                    "EfficiencyConstraint":EfficiencyConstraint,
+                    "OptimizationStrategy":OptimizationStrategy,
+                    "BreakSymmetries":BreakSymmetries,
+                    "Silent":True}
+
+                answers = classifier.pilot(parameters)
+                print "", x, y, len(answers)
+                
+                if answers: hit = True
+
+
+        print "Answers:"
+        for i,x in enumerate(answers):
+            print " No. %i:"%i, x
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
     

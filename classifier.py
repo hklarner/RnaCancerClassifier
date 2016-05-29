@@ -15,7 +15,9 @@ User input explained:
  FnameCSV              = CSV data file (0/1 matrix, tissue samples = rows)
   Header               = ID, Annots, g1, g2, g3, ... (ID:sampleid, Annots:0=healthy/1=cancer, g1:0=low expression/1=high expression)
  FnameASP              = ASP filename that is generated
+ LowerBoundInputs      = lower bound for total number of inputs for classifier
  UpperBoundInputs      = upper bound for total number of inputs for classifier
+ LowerBoundGates       = lower bound for number of gates
  UpperBoundGates       = upper bound for number of gates
  GateTypes             = a gate type is defined in terms of
    LowerBoundPos = lower bound of positive inputs to gate
@@ -75,7 +77,9 @@ def csv2rows(FnameCSV):
     
 def csv2asp(FnameCSV,
             FnameASP,
+            LowerBoundInputs,
             UpperBoundInputs,
+            LowerBoundGates,
             UpperBoundGates,
             GateTypes,
             EfficiencyConstraint,
@@ -167,16 +171,21 @@ def csv2asp(FnameCSV,
     datafile+= ["% each input may be positive or negative"]
     datafile+= ['is_sign(positive). is_sign(negative).']
     datafile+= [""]
-    datafile+= ["% upper bound for total number of inputs"]
+    datafile+= ["% bounds for total number of inputs"]
+    datafile+= ['lower_bound_inputs(%i).'%LowerBoundInputs]
     datafile+= ['upper_bound_inputs(%i).'%UpperBoundInputs]
+
+    datafile+= [""]
+    datafile+= ["% bounds for total number of gates"]
+    datafile+= ['lower_bound_gates(%i).'%LowerBoundGates]
+    datafile+= ['upper_bound_gates(%i).'%UpperBoundGates]
         
     datafile+= ['']
     datafile+= ['']
     datafile+= ['%%%% Decisions %%%%']
     datafile+= ['% First decision: the exact number of gates']
-    datafile+= ['1 {number_of_gates(1..%i)} 1.'%UpperBoundGates]
-    datafile+= ['is_integer(1..%i).'%UpperBoundGates]
-    datafile+= ['is_gate_id(GateID) :- number_of_gates(X), is_integer(GateID), GateID<=X.']
+    datafile+= ['1 {number_of_gates(X..Y)} 1 :- lower_bound_gates(X), upper_bound_gates(Y).']
+    datafile+= ['is_gate_id(1..X) :- number_of_gates(X).']
     datafile+= ['']
     datafile+= ['% Second decision: each gates is assigned a gate type']
     datafile+= ['1 {gate_type(GateID, X): is_gate_type(X)} 1 :- is_gate_id(GateID).']
@@ -213,7 +222,7 @@ def csv2asp(FnameCSV,
     
     datafile+= ['']
     datafile+= ['% the total number of inputs is bounded']
-    datafile+= ['{gate_input(GateID,Sign,MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} X :- upper_bound_inputs(X).']
+    datafile+= ['X {gate_input(GateID,Sign,MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} Y :- lower_bound_inputs(X), upper_bound_inputs(Y).']
         
     datafile+= ['']
     datafile+= ['% the number of occurences of a gate type is bounded']

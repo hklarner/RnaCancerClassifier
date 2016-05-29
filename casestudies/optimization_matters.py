@@ -3,7 +3,9 @@
 
 FnameCSV = "casestudy04.csv"
 FnameASP = "casestudy04.asp"
+LowerBoundInputs = 0
 UpperBoundInputs = 10
+LowerBoundGates  = 0
 UpperBoundGates  = 6
 GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":3,
               "LowerBoundNeg":0,"UpperBoundNeg":0,
@@ -12,7 +14,7 @@ GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":3,
               "LowerBoundNeg":0,"UpperBoundNeg":1,
               "UpperBoundOcc":4}]
 EfficiencyConstraint = True
-OptimizationStrategy = 0
+OptimizationStrategy = 1
 BreakSymmetries = True
 
 
@@ -25,7 +27,9 @@ if __name__=="__main__":
         classifier.csv2asp(
             FnameCSV,
             FnameASP,
+            LowerBoundInputs,
             UpperBoundInputs,
+            LowerBoundGates,
             UpperBoundGates,
             GateTypes,
             EfficiencyConstraint,
