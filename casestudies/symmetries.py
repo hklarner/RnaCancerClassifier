@@ -13,6 +13,7 @@ GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":2,
               "UpperBoundOcc":4}]
 EfficiencyConstraint = True
 OptimizationStrategy = 2
+BreakSymmetries = True
 
 """
 User input explained:
@@ -51,7 +52,8 @@ if __name__=="__main__":
             UpperBoundGates,
             GateTypes,
             EfficiencyConstraint,
-            OptimizationStrategy)
+            OptimizationStrategy,
+            BreakSymmetries)
             
     if 0 :
         GateInputs = "gate_input(1,negative,g1)"
