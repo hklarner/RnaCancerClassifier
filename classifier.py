@@ -30,6 +30,7 @@ User input explained:
    2 = minimize number of inputs, then minimize number of gates
    3 = minimize number of inputs
    4 = minimize number of gates
+ BreakSymmetries       = whether you want to break gate_id and gate_input symmetries (warning: expensive)
 
  Note: a classifier is the conjunction of disjunctive gates (CNF)
 """
@@ -79,7 +80,8 @@ def csv2asp(FnameCSV,
             GateTypes,
             EfficiencyConstraint,
             OptimizationStrategy,
-            Silent=False
+            Silent=False,
+            BreakSymmetries=False
             ):
 
     if not Silent:
@@ -152,12 +154,13 @@ def csv2asp(FnameCSV,
     datafile+= ["% definition of gate types in terms of upper bounds on number of inputs"]
 
     for x, gate_type in enumerate(GateTypes):
-        datafile+= ["is_gate_type(type%i)."%(x+1)]
-        datafile+= ["upper_bound_pos_inputs(type%i, %i)."%(x+1,gate_type["UpperBoundPos"])]
-        datafile+= ["upper_bound_neg_inputs(type%i, %i)."%(x+1,gate_type["UpperBoundNeg"])]
-        datafile+= ["lower_bound_pos_inputs(type%i, %i)."%(x+1,gate_type["LowerBoundPos"])]
-        datafile+= ["lower_bound_neg_inputs(type%i, %i)."%(x+1,gate_type["LowerBoundNeg"])]
-        datafile+= ["upper_bound_gate_occurence(type%i, %i)."%(x+1,gate_type["UpperBoundOcc"])]
+        datafile+= ["%% constraints for gate type %i."%(x+1)]
+        datafile+= ["is_gate_type(%i)."%(x+1)]
+        datafile+= ["upper_bound_pos_inputs(%i, %i)."%(x+1,gate_type["UpperBoundPos"])]
+        datafile+= ["upper_bound_neg_inputs(%i, %i)."%(x+1,gate_type["UpperBoundNeg"])]
+        datafile+= ["lower_bound_pos_inputs(%i, %i)."%(x+1,gate_type["LowerBoundPos"])]
+        datafile+= ["lower_bound_neg_inputs(%i, %i)."%(x+1,gate_type["LowerBoundNeg"])]
+        datafile+= ["upper_bound_gate_occurence(%i, %i)."%(x+1,gate_type["UpperBoundOcc"])]
         datafile+= ['']
 
     datafile+= ['']
@@ -216,6 +219,13 @@ def csv2asp(FnameCSV,
     datafile+= ['% the number of occurences of a gate type is bounded']
     datafile+= ['{gate_type(GateID,GateType): is_gate_id(GateID)} X :- upper_bound_gate_occurence(GateType,X).']
 
+    if BreakSymmetries:
+        datafile+= ['']
+        datafile+= ['% breaking symmetries']
+        datafile+= ['% gate ids are assigned to the smallest possible types']
+        datafile+= ['GateType1 <= GateType2 :- gate_type(GateID1, GateType1), gate_type(GateID2, GateType2), GateID1 <= GateID2.']
+        datafile+= ['MiRNA1<=MiRNA2 :- gate_type(GateID1, GateType), gate_type(GateID2, GateType), gate_input(GateID1,Sign,MiRNA1), gate_input(GateID2,Sign,MiRNA2), GateID1<=GateID2.']
+
     datafile+= ['']
     datafile+= ['% gates are disjunctive (one active input suffices to activate gate)']
     datafile+= ["gate_fires(GateID,TissueID) :- gate_input(GateID,positive,MiRNA), data(TissueID,MiRNA,high)."]
@@ -254,6 +264,7 @@ def csv2asp(FnameCSV,
     
     datafile+= ['']
     datafile+= ["#show gate_input/3."]
+    datafile+= ["#show gate_type/2."]
     
     with open(FnameASP, 'w') as f:
        f.writelines("\n".join(datafile))
