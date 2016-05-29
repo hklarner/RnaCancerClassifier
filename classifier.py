@@ -80,8 +80,8 @@ def csv2asp(FnameCSV,
             GateTypes,
             EfficiencyConstraint,
             OptimizationStrategy,
-            Silent=False,
-            BreakSymmetries=False
+            BreakSymmetries,
+            Silent=False
             ):
 
     if not Silent:
@@ -264,7 +264,6 @@ def csv2asp(FnameCSV,
     
     datafile+= ['']
     datafile+= ["#show gate_input/3."]
-    datafile+= ["#show gate_type/2."]
     
     with open(FnameASP, 'w') as f:
        f.writelines("\n".join(datafile))
