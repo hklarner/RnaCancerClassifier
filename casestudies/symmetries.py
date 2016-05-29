@@ -8,7 +8,7 @@ UpperBoundGates  = 6
 GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":2,
               "LowerBoundNeg":0,"UpperBoundNeg":0,
               "UpperBoundOcc":2},
-             {"LowerBoundPos":0,"UpperBoundPos":2,
+             {"LowerBoundPos":0,"UpperBoundPos":0,
               "LowerBoundNeg":0,"UpperBoundNeg":2,
               "UpperBoundOcc":4}]
 EfficiencyConstraint = True
