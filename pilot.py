@@ -30,7 +30,6 @@ if __name__=="__main__":
     
         parameters = {
             "FnameCSV":FnameCSV,
-            "FnameASP":None,
             "LowerBoundInputs":LowerBoundInputs,
             "UpperBoundInputs":UpperBoundInputs,
             "LowerBoundGates":LowerBoundGates,
@@ -66,7 +65,6 @@ if __name__=="__main__":
                 
                 parameters = {
                     "FnameCSV":FnameCSV,
-                    "FnameASP":None,
 
                     # slice:
                     "LowerBoundInputs": x,
