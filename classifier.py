@@ -164,6 +164,7 @@ def csv2asp(FnameCSV,
     datafile+= ["is_mirna(Y) :- data(X,Y,Z)."]
     datafile+= ['is_sign(positive). is_sign(negative).']
     datafile+= ['']
+    datafile+= ['']
     
     datafile+= ['%%% Constraints']
     datafile+= ['% number of gates']
@@ -187,7 +188,7 @@ def csv2asp(FnameCSV,
         datafile+= ['']
         
     else:
-        datafile+= ['% inputs for gates (EfficiencyConstraint=False']
+        datafile+= ['% inputs for gates (EfficiencyConstraint=False)']
         datafile+= ['X {gate_input(GateID, positive, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
         datafile+= ['X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
         datafile+= ['']
