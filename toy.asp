@@ -45,6 +45,7 @@ is_tissue_id(X) :- tissue(X,Y).
 is_mirna(Y) :- data(X,Y,Z).
 is_sign(positive). is_sign(negative).
 
+
 %%% Constraints
 % number of gates
 1 {number_of_gates(X..Y)} 1 :- lower_bound_gates(X), upper_bound_gates(Y).
@@ -53,7 +54,7 @@ is_gate_id(1..X) :- number_of_gates(X).
 % assignment of gate types
 1 {gate_type(GateID, X): is_gate_type(X)} 1 :- is_gate_id(GateID).
 
-% inputs for gates (EfficiencyConstraint=False
+% inputs for gates (EfficiencyConstraint=False)
 X {gate_input(GateID, positive, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).
 X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).
 

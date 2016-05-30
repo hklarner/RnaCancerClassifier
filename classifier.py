@@ -231,9 +231,6 @@ def csv2asp(FnameCSV,
         datafile+= ['% gate id symmetries']
         datafile+= ['GateType1 <= GateType2 :- gate_type(GateID1, GateType1), gate_type(GateID2, GateType2), GateID1 <= GateID2.']
         datafile+= ['']
-        datafile+= ['% gate input symmetries']            
-        datafile+= ['MiRNA1<=MiRNA2 :- gate_type(GateID1, GateType), gate_type(GateID2, GateType), gate_input(GateID1,Sign,MiRNA1), gate_input(GateID2,Sign,MiRNA2), GateID1<=GateID2.']
-        datafile+= ['']
         datafile+= ['']
         
     if OptimizationStrategy==1:

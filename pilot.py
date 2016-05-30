@@ -86,7 +86,7 @@ if __name__=="__main__":
 
         print "Answers:"
         for i,x in enumerate(answers):
-            print " No. %i:"%i, x
+            print " %i:"%i, x
 
 
 
