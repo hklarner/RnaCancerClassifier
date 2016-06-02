@@ -365,14 +365,16 @@ def gateinputs2function(GateInputs):
                     gate_fires = True
                     
             if SampleDict["Annots"] == "1" and not gate_fires:
-                malfunction+= [{"tissue":"cancer",
+                malfunction+= [{"class":"false negative",
+				"tissue":"cancer",
                                 "tissue_id":SampleDict["ID"],
                                 "gate_id":gateid,
                                 "gate_inputs":inputs,
                                 "miRNA_expressions":",".join(["%s=%s"%item for item in SampleDict.items() if item[0] in rnas])}]
 
             if SampleDict["Annots"] == "0" and gate_fires:
-                malfunction+= [{"tissue":"healthy",
+                malfunction+= [{"class":"false positive",
+				"tissue":"healthy",
                                 "tissue_id":SampleDict["ID"],
                                 "gate_id":gateid,
                                 "gate_inputs":inputs,
@@ -402,12 +404,19 @@ def check_classifier(FnameCSV, GateInputs):
     print " miRNAs: ", len(miRNAs)
     print " samples:", len(rows)
 
+    false_neg = 0
+    false_pos = 0
+
     function = gateinputs2function(GateInputs)
     print " testing each sample against the function.."
     hits = set([])
     for x in rows:
         malfunction = function(x)
         if malfunction:
+	    if malfunction[0]["class"]=="false negative":
+		false_neg = false_neg + 1
+	    if malfunction[0]["class"]=="false positive":
+		false_pos = false_pos + 1
             hits.add(x["ID"])
             for location in malfunction:
                 print " ** found malfunction:"
@@ -421,6 +430,8 @@ def check_classifier(FnameCSV, GateInputs):
         print " result = %i inconsistencies"%(len(hits)), hits
     else:
         print " result = classifier and data are consistent"
+ 
+    return false_neg, false_pos
         
         
 
