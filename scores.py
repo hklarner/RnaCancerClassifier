@@ -1,6 +1,8 @@
 import csv
 import math
 
+import classifier
+
 #Biochemical parameters:
 #(these are the parameters found in the .mat file)
 #not sure where they come from
@@ -11,13 +13,6 @@ T_max = 9755
 Out_max = 50000 #Out_max?!?
 
 def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
-
-	print "Biochemical parameters:"
-	print "C_1: "+ str(C_1)
-	print "C_2: "+ str(C_2)
-	print "FF4_max: "+ str(FF4_max)
-	print "T_max: "+ str(T_max)
-	print "Out_max: "+ str(Out_max)
 
 	#INPUT: Classifier Gates
 	NegativeGates = []
@@ -38,18 +33,39 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
 			PositiveGates.append(gatenumber+", "+miRNA)
 
 	#use Hannes' function to read CSV to dictionary
-	data_miRNA, data_samples = csv2rows(FnameOriginalCSV)
+	data_miRNA, data_samples = classifier.csv2rows(FnameOriginalCSV)
+	#use Hannes' check_classifier to count false negative, false positive
+	false_neg, false_pos = classifier.check_classifier(FnameBinaryCSV, GateInputs)
 
+	print ""
+	print "Biochemical parameters:"	
+	print "-----------"
+	print "C_1: "+ str(C_1)
+	print "C_2: "+ str(C_2)
+	print "FF4_max: "+ str(FF4_max)
+	print "T_max: "+ str(T_max)
+	print "Out_max: "+ str(Out_max)
+	print ""
+	print "Circuit outputs:"	
+	print "-----------"
 	#for margins
 	first_term_up = float(0)
 	second_term_up = float(0)
 	first_term_down = float(0) #number of positive observations
 	second_term_down = float(0) #number of negative observations
-	min_first_term = float(10000000) #TODO large number
+
+	min_first_term = float(1000000000) #TODO large number
 	max_second_term = float(0)
+	
+	NumberPosSamples = 0
+	NumberNegSamples = 0
 
 	#circuit output for each sample
 	for x in data_samples:
+		if int(x["Annots"]) == 1:
+			NumberPosSamples = NumberPosSamples +1
+		if int(x["Annots"]) == 0:
+			NumberNegSamples = NumberNegSamples +1
 		#calculate FF4
 		FF4_value = FF4(x,PositiveGates)	
 		
@@ -69,7 +85,9 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
 		if add_sec > max_second_term:
 			max_second_term = add_sec
 		second_term_down = second_term_down + float(1-float(x["Annots"]))	
-
+	print ""
+	print "Scores:"	
+	print "-----------"
 	average_margin = (first_term_up / first_term_down) - (second_term_up / second_term_down)
 	print "Average margin of Circuit (C_MarginA): "+str(average_margin)	
 	
@@ -79,7 +97,32 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
 	#PERFORMANCE SCORE 2: Margins
 	MyLambda = 0.5
 	score2 = (MyLambda*average_margin) + ((1-MyLambda)*worst_margin)
-	print "The second performance score of the cicuit is: "+ str(score2)
+	print "The second performance score (margins) of the cicuit is: "+ str(score2)
+
+	#PERFORMANCE SCORE 1: AUC #TODO	
+	print ""
+	print "Classification:"
+	print "-----------"
+	print "Number of positive samples (cancer) : "+str(NumberPosSamples)
+	print "Number of negative samples (healthy) : "+str(NumberNegSamples)
+
+	print "Number of false positive : "+str(false_pos)
+	print "Number of false negative : "+str(false_neg)
+	true_pos = NumberPosSamples - false_neg
+	true_neg = NumberNegSamples - false_pos
+	print "Number of true positive : "+str(true_pos)
+	print "Number of true negative : "+str(true_neg)
+	sensitivity = float(true_pos) / float(NumberPosSamples)
+	specificity = float(true_neg) / float(NumberNegSamples)	
+	false_neg_rate = float(false_neg) / float(NumberPosSamples)
+	false_pos_rate = float(false_pos) / float(NumberNegSamples)
+	print ""
+	print "Statistics:"
+	print "-----------"
+	print "Sensitivity : "+str(sensitivity)
+	print "Specificity : "+str(specificity)
+	print "False positive rate : "+str(false_pos_rate)
+	print "False negative rate : "+str(false_neg_rate)
 
 def circuit_output(Sample,NegativeGatesInput,FF4_Val):
 	neg_vector = []	
@@ -95,7 +138,11 @@ def circuit_output(Sample,NegativeGatesInput,FF4_Val):
 
 def FF4(Sample,PositiveGatesInput):
 	ff4_sum = float(0)
-	for i in [5,6]: #TODO
+
+	first =  int(PositiveGatesInput[0][0])
+	last =  int(PositiveGatesInput[-1][0])
+
+	for i in range(first,last+1):
 		vector = []	
 		for allinputs in PositiveGatesInput:
 			gateinput = allinputs.split(", ")
@@ -107,35 +154,6 @@ def FF4(Sample,PositiveGatesInput):
 	ff4_f2_result = f_2(ff4_sum)
 	FF4 =float(FF4_max)*ff4_f2_result
 	return FF4
-
-def csv2rows(FnameCSV):
-    """
-    Converts a csv file to a list of dictionaries.
-    """
-
-    with open(FnameCSV, 'rb') as f:
-        reader = csv.reader(f, delimiter=",")
-        for x in reader:
-            if not x:continue
-            header = x
-            header = [x.strip() for x in header]
-            break
-        
-        miRNAs = [x for x in header if not x in ["ID", "Annots"]]
-
-        IDs = set([])
-        rows = []
-        for x in reader:
-            if not x: continue
-            if not x[0].strip(): continue
-            newrow = dict(zip(header,[y.strip() for y in x]))
-            if newrow["ID"] in IDs:
-                print "\n***ERROR: row IDs must be unique, found duplicate (%s)."%newrow["ID"]
-                raise Exception
-            IDs.add(newrow["ID"])
-            rows.append(newrow)
-
-    return miRNAs, rows
 
 def f_1(InputVector):
 	sum_num = float(0)
