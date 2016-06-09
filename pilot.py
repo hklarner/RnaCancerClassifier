@@ -43,7 +43,7 @@ if __name__=="__main__":
         answers = classifier.pilot(parameters)
         
         for i,x in enumerate(answers):
-            FnamePDF = " toy_%i.pdf"%i
+            FnamePDF = "toy_%i.pdf"%i
             classifier.gateinputs2pdf(FnamePDF, x, Silent=True)
             print " created", FnamePDF
 

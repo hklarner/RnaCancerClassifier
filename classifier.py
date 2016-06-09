@@ -96,8 +96,9 @@ def csv2asp(FnameCSV,
         print " gate types:", GateTypes
         print " efficiency constraints:",EfficiencyConstraint
         print " optimization strategy:",OptimizationStrategy, "(%s)"%OptimizationStrategyMapping[OptimizationStrategy]
-    
 
+    assert(LowerBoundGates>0)
+    
     miRNAs, rows = csv2rows(FnameCSV)
 
     if not Silent:
