@@ -85,8 +85,8 @@ def csv2asp(FnameCSV,
             EfficiencyConstraint,
             OptimizationStrategy,
             BreakSymmetries,
-            Silent=False,
-            UniquenessConstraint=True,
+            Silent,
+            UniquenessConstraint,
             ):
 
     if not Silent:
@@ -195,14 +195,15 @@ def csv2asp(FnameCSV,
         datafile+= ['X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
         datafile+= ['']
     
-    if UniquenessConstraint:
-        datafile+= ['% at least one input for each gate']
-        datafile+= ['1 {gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).']
-        datafile+= ['']
-
-    datafile+= ['% inputs must be unique']
-    datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate_id(GateID)} 1 :- is_mirna(MiRNA)."]
+    
+    datafile+= ['% at least one input for each gate']
+    datafile+= ['1 {gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).']
     datafile+= ['']
+
+    if UniquenessConstraint:
+        datafile+= ['% inputs must be unique']
+        datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate_id(GateID)} 1 :- is_mirna(MiRNA)."]
+        datafile+= ['']
     
     datafile+= ['% number of inputs is bounded']
     datafile+= ['X {gate_input(GateID,Sign,MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} Y :- lower_bound_inputs(X), upper_bound_inputs(Y).']    
@@ -237,17 +238,17 @@ def csv2asp(FnameCSV,
         
     if OptimizationStrategy==1:
         datafile+= ['% optimization setup 2: first number of inputs then number of gates.']
-        datafile+= ['#minimize{ 1@1,MiRNA: gate_input(GateID,Sign,MiRNA) }.']
+        datafile+= ['#minimize{ 1@1,(GateID,MiRNA): gate_input(GateID,Sign,MiRNA) }.']
         datafile+= ['#minimize{ 1@2,GateID:gate_input(GateID,Sign,MiRNA) }.']
         
     elif OptimizationStrategy==2:
         datafile+= ['% optimization setup 1: first number of gates then number of inputs.']
         datafile+= ['#minimize{ 1@1,GateID:gate_input(GateID,Sign,MiRNA) }.']
-        datafile+= ['#minimize{ 1@2,MiRNA: gate_input(GateID,Sign,MiRNA) }.']
+        datafile+= ['#minimize{ 1@2,(GateID,MiRNA): gate_input(GateID,Sign,MiRNA) }.']
         
     elif OptimizationStrategy==3:
         datafile+= ['% optimization setup 3: only number of inputs.']
-        datafile+= ['#minimize{ 1,MiRNA:gate_input(GateID,Sign,MiRNA) }.']
+        datafile+= ['#minimize{ 1,(GateID,MiRNA):gate_input(GateID,Sign,MiRNA) }.']
         
     elif OptimizationStrategy==4:
         datafile+= ['% optimization setup 4: only number of gates.']
