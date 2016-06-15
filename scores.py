@@ -1,5 +1,6 @@
 import csv
 import math
+import numpy as np
 
 import classifier
 
@@ -12,7 +13,7 @@ FF4_max = 3000
 T_max = 9755
 Out_max = 50000 #Out_max?!?
 
-def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
+def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold):
 
 	#INPUT: Classifier Gates
 	NegativeGates = []
@@ -123,6 +124,34 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
 	print "Specificity : "+str(specificity)
 	print "False positive rate : "+str(false_pos_rate)
 	print "False negative rate : "+str(false_neg_rate)
+	print ""
+	print "Binarized data:"
+	print "-----------"
+	binaryvalue_margins(FnameOriginalCSV, BinThreshold)
+	print "Wrote .csv file with margins for binary values:"
+	print str(FnameOriginalCSV[:-4])+"_binarymargins.csv"
+	print ""
+
+def binaryvalue_margins(FnameOriginalCSV, BinThreshold):
+	original_miRNA, original_samples = classifier.csv2rows(FnameOriginalCSV)
+
+	with open(FnameOriginalCSV[:-4]+"_binarymargins.csv","wb") as csvfile:
+    		mywriter = csv.writer(csvfile, delimiter=',')
+
+		header = ["ID" , "Annots"]
+		for rna in original_miRNA:
+			header.append(rna)
+		mywriter.writerow(header)
+
+		for x in range(0,len(original_samples)):
+			marginrow = [str(x+1)]
+			marginrow.append(original_samples[x]["Annots"])
+			for rna in original_miRNA:			
+				orgval = float(original_samples[x][rna].replace(',','.'))
+				#calculate binary margin for each value
+				bin_marg = abs(float(math.log10(orgval))-float(math.log10(BinThreshold)))
+				marginrow.append(bin_marg)
+			mywriter.writerow(marginrow)
 
 def circuit_output(Sample,NegativeGatesInput,FF4_Val):
 	neg_vector = []	
@@ -174,4 +203,5 @@ GateInputs+= "gate_input(6,positive,g1) gate_input(6,positive,g5) gate_input(6,p
 
 FnameBinaryCSV = "/home/mi/katinkab/synthbio/RnaCancerClassifier/casestudies/C2.csv"
 FnameOriginalCSV = "/home/mi/katinkab/synthbio/RnaCancerClassifier/casestudies/C2_original.csv"
-scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV)
+BinThreshold = 250
+scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold)
