@@ -391,7 +391,7 @@ def gateinputs2function(GateInputs):
             false_pos = True
             malfunction = []
             
-        return falsepos, falseneg, malfunction
+        return false_pos, false_neg, malfunction
 
     return function
                         
