@@ -354,8 +354,11 @@ def gateinputs2function(GateInputs):
             
         
     def function(SampleDict):
+        false_pos = False
+        false_neg = False
         malfunction = []
         classifier_fires = True
+        
         for gateid, inputs in Gates.items():
             gate_fires = False
             rnas = set([])
@@ -367,16 +370,15 @@ def gateinputs2function(GateInputs):
                     gate_fires = True
                     
             if SampleDict["Annots"] == "1" and not gate_fires:
-                malfunction+= [{"class":"false negative",
-				"tissue":"cancer",
+                false_neg = True
+                malfunction+= [{"tissue":"cancer",
                                 "tissue_id":SampleDict["ID"],
                                 "gate_id":gateid,
                                 "gate_inputs":inputs,
                                 "miRNA_expressions":",".join(["%s=%s"%item for item in SampleDict.items() if item[0] in rnas])}]
 
             if SampleDict["Annots"] == "0" and gate_fires:
-                malfunction+= [{"class":"false positive",
-				"tissue":"healthy",
+                malfunction+= [{"tissue":"healthy",
                                 "tissue_id":SampleDict["ID"],
                                 "gate_id":gateid,
                                 "gate_inputs":inputs,
@@ -385,9 +387,10 @@ def gateinputs2function(GateInputs):
             classifier_fires = classifier_fires and gate_fires
 
         if SampleDict["Annots"] == "0" and not classifier_fires:
+            false_pos = True
             malfunction = []
             
-        return malfunction
+        return falsepos, falseneg, malfunction
 
     return function
                         
@@ -408,24 +411,22 @@ def check_classifier(FnameCSV, GateInputs):
 
     false_neg = 0
     false_pos = 0
-
+    
     function = gateinputs2function(GateInputs)
     print " testing each sample against the function.."
     hits = set([])
     for x in rows:
-        malfunction = function(x)
+        fp, fn, malfunction = function(x)
+        if fp: false_pos += 1
+        if fn: false_neg += 1
+        
         if malfunction:
-	    if malfunction[0]["class"]=="false negative":
-		false_neg = false_neg + 1
-	    if malfunction[0]["class"]=="false positive":
-		false_pos = false_pos + 1
             hits.add(x["ID"])
             for location in malfunction:
                 print " ** found malfunction:"
                 for item in sorted(location.items()):
                     print "    %s = %s"%item
                     
-
     print " classifier =",GateInputs
     print " data =",FnameCSV
     if hits:
