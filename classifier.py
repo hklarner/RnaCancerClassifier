@@ -85,7 +85,8 @@ def csv2asp(FnameCSV,
             EfficiencyConstraint,
             OptimizationStrategy,
             BreakSymmetries,
-            Silent=False
+            Silent=False,
+            UniquenessConstraint=True,
             ):
 
     if not Silent:
@@ -194,10 +195,10 @@ def csv2asp(FnameCSV,
         datafile+= ['X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
         datafile+= ['']
     
-    
-    datafile+= ['% at least one input for each gate']
-    datafile+= ['1 {gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).']
-    datafile+= ['']
+    if UniquenessConstraint:
+        datafile+= ['% at least one input for each gate']
+        datafile+= ['1 {gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).']
+        datafile+= ['']
 
     datafile+= ['% inputs must be unique']
     datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate_id(GateID)} 1 :- is_mirna(MiRNA)."]
@@ -637,6 +638,9 @@ def pilot(Parameters, FnamePaths=None):
             else:
                 hit = True
                 answers+=[line]
+        elif "UNSATISFIABLE" in line:
+            print "UNSATISFIABLE"
+            break
         else:
             hit = False
         
