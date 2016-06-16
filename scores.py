@@ -33,6 +33,8 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold):
 			gatenumber = interstep[0][11:] 
 			PositiveGates.append(gatenumber+", "+miRNA)
 
+	print PositiveGates
+
 	#use Hannes' function to read CSV to dictionary
 	data_miRNA, data_samples = classifier.csv2rows(FnameOriginalCSV)
 	#use Hannes' check_classifier to count false negative, false positive
@@ -127,10 +129,19 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold):
 	print ""
 	print "Binarized data:"
 	print "-----------"
-	binaryvalue_margins(FnameOriginalCSV, BinThreshold)
+	BinMarginsCSV = binaryvalue_margins(FnameOriginalCSV, BinThreshold)
 	print "Wrote .csv file with margins for binary values:"
 	print str(FnameOriginalCSV[:-4])+"_binarymargins.csv"
 	print ""
+	print "Circuit output margins:"
+	print "-----------"
+	circout_margins(PositiveGates, NegativeGates, BinMarginsCSV)
+	print ""
+
+def circout_margins(PosGates, NegGates, BinMargCSV):
+	print "circout"
+	print PosGates
+	print NegGates
 
 def binaryvalue_margins(FnameOriginalCSV, BinThreshold):
 	original_miRNA, original_samples = classifier.csv2rows(FnameOriginalCSV)
@@ -152,6 +163,9 @@ def binaryvalue_margins(FnameOriginalCSV, BinThreshold):
 				bin_marg = abs(float(math.log10(orgval))-float(math.log10(BinThreshold)))
 				marginrow.append(bin_marg)
 			mywriter.writerow(marginrow)
+		BinMarginsCSV = csvfile	
+
+	return BinMarginsCSV
 
 def circuit_output(Sample,NegativeGatesInput,FF4_Val):
 	neg_vector = []	
