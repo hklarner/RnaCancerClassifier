@@ -78,7 +78,10 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold):
 		if int(x["Annots"]) == 0:
 			NumberNegSamples = NumberNegSamples +1
 		#calculate FF4
-		FF4_value = FF4(x,PositiveGates)	
+		if not PositiveGates:
+			FF4_value = 0
+		else:
+			FF4_value = FF4(x,PositiveGates)	
 		
 		#calculate circuit output
 		circ_out = circuit_output(x,NegativeGates,FF4_value)
@@ -215,6 +218,10 @@ def f_2(InputFloat):
 	out = float(InputFloat) / ((float(C_2) / float(T_max)) + float(InputFloat))
 	return out
 
+#our circuit
+#GateInputs = "gate_input(1,negative,g3) gate_input(2,negative,g4)"
+
+#given circuit
 GateInputs = "gate_input(1,negative,g7) gate_input(2,negative,g6) gate_input(3,negative,g4) gate_input(4,negative,g3) "
 GateInputs+= "gate_input(5,positive,g1) gate_input(5,positive,g2) gate_input(5,positive,g8) "
 GateInputs+= "gate_input(6,positive,g1) gate_input(6,positive,g5) gate_input(6,positive,g8)"
