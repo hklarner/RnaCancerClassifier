@@ -389,10 +389,12 @@ def gateinputs2function(GateInputs):
             classifier_fires = classifier_fires and gate_fires
 
         if SampleDict["Annots"] == "0" and not classifier_fires:
-            false_pos = True
             malfunction = []
+
+	if SampleDict["Annots"] == "0" and classifier_fires:
+            false_pos = True
             
-        return falsepos, falseneg, malfunction
+        return false_pos, false_neg, malfunction
 
     return function
                         

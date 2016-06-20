@@ -1,5 +1,7 @@
 import csv
 import math
+import numpy as np
+from sklearn.metrics import roc_auc_score
 
 import classifier
 
@@ -12,7 +14,7 @@ FF4_max = 3000
 T_max = 9755
 Out_max = 50000 #Out_max?!?
 
-def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
+def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold):
 
 	#INPUT: Classifier Gates
 	NegativeGates = []
@@ -32,13 +34,19 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
 			gatenumber = interstep[0][11:] 
 			PositiveGates.append(gatenumber+", "+miRNA)
 
+	print PositiveGates
+
 	#use Hannes' function to read CSV to dictionary
 	data_miRNA, data_samples = classifier.csv2rows(FnameOriginalCSV)
 	#use Hannes' check_classifier to count false negative, false positive
 	false_neg, false_pos = classifier.check_classifier(FnameBinaryCSV, GateInputs)
 
 	print ""
-	print "Biochemical parameters:"	
+	print "------------------------------------------------------------------"	
+	print "SCORES:"
+	print "------------------------------------------------------------------"	
+	print ""
+	print "Biochemical parameters used:"	
 	print "-----------"
 	print "C_1: "+ str(C_1)
 	print "C_2: "+ str(C_2)
@@ -61,7 +69,10 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
 	NumberNegSamples = 0
 
 	#circuit output for each sample
+	annots = []
+	circuit_outputs = []
 	for x in data_samples:
+		annots.append(int(x["Annots"]))
 		if int(x["Annots"]) == 1:
 			NumberPosSamples = NumberPosSamples +1
 		if int(x["Annots"]) == 0:
@@ -71,6 +82,7 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
 		
 		#calculate circuit output
 		circ_out = circuit_output(x,NegativeGates,FF4_value)
+		circuit_outputs.append(circ_out)
 	
 	#average classification margin for whole circuit
 		add_first = float(x["Annots"])*float(math.log10(circ_out))
@@ -86,21 +98,16 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
 			max_second_term = add_sec
 		second_term_down = second_term_down + float(1-float(x["Annots"]))	
 	print ""
-	print "Scores:"	
+	print "Margins:"	
 	print "-----------"
 	average_margin = (first_term_up / first_term_down) - (second_term_up / second_term_down)
 	print "Average margin of Circuit (C_MarginA): "+str(average_margin)	
 	
 	worst_margin = min_first_term - max_second_term
 	print "Worst margin of Circuit (C_MarginW): "+str(worst_margin)	
-
 	#PERFORMANCE SCORE 2: Margins
 	MyLambda = 0.5
 	score2 = (MyLambda*average_margin) + ((1-MyLambda)*worst_margin)
-	print "The second performance score (margins) of the cicuit is: "+ str(score2)
-
-	#PERFORMANCE SCORE 1: AUC #TODO	
-	print ""
 	print "Classification:"
 	print "-----------"
 	print "Number of positive samples (cancer) : "+str(NumberPosSamples)
@@ -123,6 +130,46 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV):
 	print "Specificity : "+str(specificity)
 	print "False positive rate : "+str(false_pos_rate)
 	print "False negative rate : "+str(false_neg_rate)
+	print ""
+	print "Binarization margins:"
+	print "-----------"
+	BinMarginsCSV = binaryvalue_margins(FnameOriginalCSV, BinThreshold)
+	print "Wrote .csv file with margins for binary values:"
+	print str(FnameOriginalCSV[:-4])+"_binarymargins.csv"
+	print ""
+	print "Performance:"
+	print "-----------"
+	y_true = np.array(annots)
+	y_scores = np.array(circuit_outputs)
+	auc = roc_auc_score(y_true, y_scores)
+	print "First performance score: Area under the ROC curve: " + str(auc)
+	print "Second performance score: Margins (lambda=0.5): "+ str(score2)
+	print "                          Margins (lambda=1.0): "+ str(average_margin)
+	print ""
+
+def binaryvalue_margins(FnameOriginalCSV, BinThreshold):
+	original_miRNA, original_samples = classifier.csv2rows(FnameOriginalCSV)
+
+	with open(FnameOriginalCSV[:-4]+"_binarymargins.csv","wb") as csvfile:
+    		mywriter = csv.writer(csvfile, delimiter=',')
+
+		header = ["ID" , "Annots"]
+		for rna in original_miRNA:
+			header.append(str(rna))
+		mywriter.writerow(header)
+
+		for x in range(0,len(original_samples)):
+			marginrow = [str(x+1)]
+			marginrow.append(original_samples[x]["Annots"])
+			for rna in original_miRNA:			
+				orgval = float(original_samples[x][rna].replace(',','.'))
+				#calculate binary margin for each value
+				bin_marg = round(abs(float(math.log10(orgval))-float(math.log10(BinThreshold))),4)
+				marginrow.append(str(bin_marg))
+			mywriter.writerow(marginrow)
+		BinMarginsCSV = FnameOriginalCSV[:-4]+"_binarymargins.csv"
+
+	return BinMarginsCSV
 
 def circuit_output(Sample,NegativeGatesInput,FF4_Val):
 	neg_vector = []	
@@ -174,4 +221,5 @@ GateInputs+= "gate_input(6,positive,g1) gate_input(6,positive,g5) gate_input(6,p
 
 FnameBinaryCSV = "/home/mi/katinkab/synthbio/RnaCancerClassifier/casestudies/C2.csv"
 FnameOriginalCSV = "/home/mi/katinkab/synthbio/RnaCancerClassifier/casestudies/C2_original.csv"
-scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV)
+BinThreshold = 250
+scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold)
