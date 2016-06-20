@@ -2,9 +2,9 @@
 
 
 
-LowerBoundInputs = 0
+LowerBoundInputs = 1
 UpperBoundInputs = 10
-LowerBoundGates  = 0
+LowerBoundGates  = 1
 UpperBoundGates  = 2
 GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":2,
               "LowerBoundNeg":0,"UpperBoundNeg":0,
@@ -15,6 +15,7 @@ GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":2,
 EfficiencyConstraint = False
 OptimizationStrategy = 1
 BreakSymmetries = True
+UniquenessConstraint = True
 
 
 import classifier
@@ -38,7 +39,8 @@ if __name__=="__main__":
             "EfficiencyConstraint":EfficiencyConstraint,
             "OptimizationStrategy":OptimizationStrategy,
             "BreakSymmetries":BreakSymmetries,
-            "Silent":True}
+            "Silent":True,
+            "UniquenessConstraint": UniquenessConstraint}
 
         answers = classifier.pilot(parameters)
         
@@ -50,7 +52,7 @@ if __name__=="__main__":
         print " answers:", len(answers)
             
         
-    if 1:
+    if 0:
         # slices
         FnameCSV = "casestudies/C2_corrected.csv"
 

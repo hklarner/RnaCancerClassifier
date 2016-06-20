@@ -33,6 +33,7 @@ User input explained:
    3 = minimize number of inputs
    4 = minimize number of gates
  BreakSymmetries       = whether you want to break gate_id and gate_input symmetries (warning: expensive)
+ UniquenessConstraint  = whether inputs should be unique across the classifier, irrespective of whether they are negated or not
 
  Note: a classifier is the conjunction of disjunctive gates (CNF)
 """
