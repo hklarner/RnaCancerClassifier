@@ -111,6 +111,7 @@ def scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold):
 	#PERFORMANCE SCORE 2: Margins
 	MyLambda = 0.5
 	score2 = (MyLambda*average_margin) + ((1-MyLambda)*worst_margin)
+	print ""
 	print "Classification:"
 	print "-----------"
 	print "Number of positive samples (cancer) : "+str(NumberPosSamples)
