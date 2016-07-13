@@ -34,6 +34,9 @@ User input explained:
    4 = minimize number of gates
  BreakSymmetries       = whether you want to break gate_id and gate_input symmetries (warning: expensive)
  UniquenessConstraint  = whether inputs should be unique across the classifier, irrespective of whether they are negated or not
+ PerfectClassifier     = whether the classifier should be perfect or not
+ UpperBoundFalsePos    = upper bound on false positive tissues (needed if PerfectClassifier=False)
+ UpperBoundFalseNeg    = upper bound on false negative tissues (needed if PerfectClassifier=False)
 
  Note: a classifier is the conjunction of disjunctive gates (CNF)
 """
@@ -88,6 +91,9 @@ def csv2asp(FnameCSV,
             BreakSymmetries,
             Silent,
             UniquenessConstraint,
+	    PerfectClassifier,
+	    UpperBoundFalsePos,
+	    UpperBoundFalseNeg
             ):
 
     if not Silent:
@@ -224,10 +230,18 @@ def csv2asp(FnameCSV,
     datafile+= ["classifier(TissueID,cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID)."]
     datafile+= ['']
     
-    datafile+= ['% consistency of classifier and data']
-    datafile+= [':- tissue(TissueID,healthy), classifier(TissueID,cancer).']
-    datafile+= [':- tissue(TissueID,cancer),  classifier(TissueID,healthy).']
-    datafile+= ['']
+    if PerfectClassifier:
+    	datafile+= ['% consistency of classifier and data (PerfectClassifier=True)']
+    	datafile+= [':- tissue(TissueID,healthy), classifier(TissueID,cancer).']
+    	datafile+= [':- tissue(TissueID,cancer),  classifier(TissueID,healthy).']
+    	datafile+= ['']
+    else:
+    	datafile+= ['% consistency of classifier and data (PerfectClassifier=False)']
+    	datafile+= ['upper_bound_falsepos(%i).'%UpperBoundFalsePos]
+    	datafile+= ['upper_bound_falseneg(%i).'%UpperBoundFalseNeg]
+    	datafile+= [':- X+1 {tissue(TissueID,healthy) : classifier(TissueID,cancer)}, upper_bound_falsepos(X).']
+    	datafile+= [':- X+1 {tissue(TissueID,cancer) : classifier(TissueID,healthy)}, upper_bound_falseneg(X).']
+    	datafile+= ['']
 
     if BreakSymmetries:
         datafile+= ['']
