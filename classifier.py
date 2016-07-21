@@ -43,8 +43,8 @@ User input explained:
 
 
 OptimizationStrategyMapping = {0:"no optimization",
-                               1:"minimize inputs then minimize gates",
-                               2:"minimize gates then minimize inputs",
+                               1:"minimize gates then minimize inputs",
+                               2:"minimize inputs then minimize gates",
                                3:"minimize inputs",
                                4:"minimize gates"}
 
@@ -61,7 +61,7 @@ def csv2rows(FnameCSV):
             header = x
             header = [x.strip() for x in header]
             break
-        
+
         miRNAs = [x for x in header if not x in ["ID", "Annots"]]
 
         IDs = set([])
@@ -78,7 +78,7 @@ def csv2rows(FnameCSV):
 
     return miRNAs, rows
 
-    
+
 def csv2asp(FnameCSV,
             FnameASP,
             LowerBoundInputs,
@@ -106,7 +106,7 @@ def csv2asp(FnameCSV,
         print " optimization strategy:",OptimizationStrategy, "(%s)"%OptimizationStrategyMapping[OptimizationStrategy]
 
     assert(LowerBoundGates>0)
-    
+
     miRNAs, rows = csv2rows(FnameCSV)
 
     if not Silent:
@@ -125,7 +125,7 @@ def csv2asp(FnameCSV,
     datafile+= ['%%  optimization strategy: %i  (%s)'%(OptimizationStrategy,OptimizationStrategyMapping[OptimizationStrategy])]
     datafile+= ['']
     datafile+= ['']
-                
+
     datafile+= ['%%% The tissue data']
     dummy = []
     for x in rows:
@@ -134,7 +134,7 @@ def csv2asp(FnameCSV,
         if sum(map(len,dummy))>100:
             datafile+= [" ".join(dummy)]
             dummy = []
-                
+
     datafile+= [" ".join(dummy)]
     datafile+= [""]
     datafile+= ['%%% The miRNA data']
@@ -146,11 +146,11 @@ def csv2asp(FnameCSV,
             if sum(map(len,dummy))>100:
                 datafile+= [" ".join(dummy)]
                 dummy = []
-                
+
     datafile+= [' '.join(dummy)]
     datafile+= ['']
     datafile+= ['']
-    
+
     datafile+= ["%%% User Input"]
     datafile+= ['lower_bound_inputs(%i).'%LowerBoundInputs]
     datafile+= ['upper_bound_inputs(%i).'%UpperBoundInputs]
@@ -174,13 +174,13 @@ def csv2asp(FnameCSV,
     datafile+= ['is_sign(positive). is_sign(negative).']
     datafile+= ['']
     datafile+= ['']
-    
+
     datafile+= ['%%% Constraints']
     datafile+= ['% number of gates']
     datafile+= ['1 {number_of_gates(X..Y)} 1 :- lower_bound_gates(X), upper_bound_gates(Y).']
     datafile+= ['is_gate_id(1..X) :- number_of_gates(X).']
     datafile+= ['']
-    
+
     datafile+= ['% assignment of gate types']
     datafile+= ['1 {gate_type(GateID, X): is_gate_type(X)} 1 :- is_gate_id(GateID).']
     datafile+= ['']
@@ -195,14 +195,14 @@ def csv2asp(FnameCSV,
         datafile+= ['X {gate_input(GateID, positive, MiRNA): feasible_pos_miRNA(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
         datafile+= ['X {gate_input(GateID, negative, MiRNA): feasible_neg_miRNA(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']
         datafile+= ['']
-        
+
     else:
         datafile+= ['% inputs for gates (EfficiencyConstraint=False)']
         datafile+= ['X {gate_input(GateID, positive, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_pos_inputs(GateType, X), upper_bound_pos_inputs(GateType, Y).']
-        datafile+= ['X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']        
+        datafile+= ['X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, GateType), lower_bound_neg_inputs(GateType, X), upper_bound_neg_inputs(GateType, Y).']
         datafile+= ['']
-    
-    
+
+
     datafile+= ['% at least one input for each gate']
     datafile+= ['1 {gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).']
     datafile+= ['']
@@ -211,25 +211,25 @@ def csv2asp(FnameCSV,
         datafile+= ['% inputs must be unique']
         datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate_id(GateID)} 1 :- is_mirna(MiRNA)."]
         datafile+= ['']
-    
+
     datafile+= ['% number of inputs is bounded']
-    datafile+= ['X {gate_input(GateID,Sign,MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} Y :- lower_bound_inputs(X), upper_bound_inputs(Y).']    
+    datafile+= ['X {gate_input(GateID,Sign,MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} Y :- lower_bound_inputs(X), upper_bound_inputs(Y).']
     datafile+= ['']
-    
+
     datafile+= ['% occurences of gate types is bounded']
     datafile+= ['{gate_type(GateID,GateType): is_gate_id(GateID)} X :- upper_bound_gate_occurence(GateType,X).']
     datafile+= ['']
-    
+
     datafile+= ['% gates fire condition']
     datafile+= ["gate_fires(GateID,TissueID) :- gate_input(GateID,positive,MiRNA), data(TissueID,MiRNA,high)."]
     datafile+= ["gate_fires(GateID,TissueID) :- gate_input(GateID,negative,MiRNA), data(TissueID,MiRNA,low)."]
     datafile+= ['']
-    
+
     datafile+= ['% prediction of classifier']
     datafile+= ["classifier(TissueID,healthy) :- not gate_fires(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID)."]
     datafile+= ["classifier(TissueID,cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID)."]
     datafile+= ['']
-    
+
     if PerfectClassifier:
     	datafile+= ['% consistency of classifier and data (PerfectClassifier=True)']
     	datafile+= [':- tissue(TissueID,healthy), classifier(TissueID,cancer).']
@@ -250,28 +250,28 @@ def csv2asp(FnameCSV,
         datafile+= ['GateType1 <= GateType2 :- gate_type(GateID1, GateType1), gate_type(GateID2, GateType2), GateID1 <= GateID2.']
         datafile+= ['']
         datafile+= ['']
-        
+
     if OptimizationStrategy==1:
         datafile+= ['% optimization setup 2: first number of inputs then number of gates.']
         datafile+= ['#minimize{ 1@1,(GateID,MiRNA): gate_input(GateID,Sign,MiRNA) }.']
         datafile+= ['#minimize{ 1@2,GateID:gate_input(GateID,Sign,MiRNA) }.']
-        
+
     elif OptimizationStrategy==2:
         datafile+= ['% optimization setup 1: first number of gates then number of inputs.']
         datafile+= ['#minimize{ 1@1,GateID:gate_input(GateID,Sign,MiRNA) }.']
         datafile+= ['#minimize{ 1@2,(GateID,MiRNA): gate_input(GateID,Sign,MiRNA) }.']
-        
+
     elif OptimizationStrategy==3:
         datafile+= ['% optimization setup 3: only number of inputs.']
         datafile+= ['#minimize{ 1,(GateID,MiRNA):gate_input(GateID,Sign,MiRNA) }.']
-        
+
     elif OptimizationStrategy==4:
         datafile+= ['% optimization setup 4: only number of gates.']
         datafile+= ['#minimize{ 1,GateID:gate_input(GateID,Sign,MiRNA) }.']
-                    
+
     elif OptimizationStrategy==0:
         datafile+= ['% no optimization selected']
-    
+
     datafile+= ['']
     datafile+= ["#show gate_input/3."]
 
@@ -299,8 +299,8 @@ def gateinputs2pdf(FnamePDF, GateInputs, Silent=False):
     GateInputs = GateInputs.strip()
     GateInputs = GateInputs.split()
 
-    
-    
+
+
     GateInputs = [x[x.find("(")+1:-1].split(",") for x in GateInputs]
 
 
@@ -316,7 +316,7 @@ def gateinputs2pdf(FnamePDF, GateInputs, Silent=False):
         else:
             arrow="tee"
             color="red"
-            
+
         s+= ['"%s" -> "gate%s" [arrowhead="%s", color="%s"];'%(mrna,gate,arrow,color)]
 
     for gate in gates:
@@ -326,7 +326,7 @@ def gateinputs2pdf(FnamePDF, GateInputs, Silent=False):
 
     cmd = ["dot", "-Tpdf", "-o", FnamePDF]
     dotfile = "\n".join(s)
-    
+
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate( input=dotfile )
     proc.stdin.close()
@@ -367,14 +367,14 @@ def gateinputs2function(GateInputs):
 
         Gates[id].add((rna,sign))
         seen.add(rna)
-            
-        
+
+
     def function(SampleDict):
         false_pos = False
         false_neg = False
         malfunction = []
         classifier_fires = True
-        
+
         for gateid, inputs in Gates.items():
             gate_fires = False
             rnas = set([])
@@ -384,7 +384,7 @@ def gateinputs2function(GateInputs):
                     gate_fires = True
                 elif sign=="negative" and SampleDict[rna]=="0":
                     gate_fires = True
-                    
+
             if SampleDict["Annots"] == "1" and not gate_fires:
                 false_neg = True
                 malfunction+= [{"tissue":"cancer",
@@ -405,14 +405,14 @@ def gateinputs2function(GateInputs):
         if SampleDict["Annots"] == "0" and not classifier_fires:
             malfunction = []
 
-	if SampleDict["Annots"] == "0" and classifier_fires:
+        if SampleDict["Annots"] == "0" and classifier_fires:
             false_pos = True
-            
+
         return false_pos, false_neg, malfunction
 
     return function
-                        
-    
+
+
 
 def check_classifier(FnameCSV, GateInputs):
     """
@@ -429,7 +429,7 @@ def check_classifier(FnameCSV, GateInputs):
 
     false_neg = 0
     false_pos = 0
-    
+
     function = gateinputs2function(GateInputs)
     print " testing each sample against the function.."
     hits = set([])
@@ -437,29 +437,29 @@ def check_classifier(FnameCSV, GateInputs):
         fp, fn, malfunction = function(x)
         if fp: false_pos += 1
         if fn: false_neg += 1
-        
+
         if malfunction:
             hits.add(x["ID"])
             for location in malfunction:
                 print " ** found malfunction:"
                 for item in sorted(location.items()):
                     print "    %s = %s"%item
-                    
+
     print " classifier =",GateInputs
     print " data =",FnameCSV
     if hits:
         print " result = %i inconsistencies"%(len(hits)), hits
     else:
         print " result = classifier and data are consistent"
- 
+
     return false_neg, false_pos
-        
-        
+
+
 
 def check_csv(FnameCSV):
     """
     counts how many miRNAs are constant across all samples, and
-    checks if there are inconsistencies in the data (identical miRNA profile but different annotation)    
+    checks if there are inconsistencies in the data (identical miRNA profile but different annotation)
     """
 
     print "\n--- check_csv"
@@ -467,7 +467,11 @@ def check_csv(FnameCSV):
     miRNAs, rows = csv2rows(FnameCSV)
     print " miRNAs: ", len(miRNAs)
     print " samples:", len(rows)
-    
+
+    healthy = sum([1 for x in rows if x["Annots"]=="0"])
+    print "  healthy: %i"%healthy
+    print "  cancer: %i"%(len(rows)-healthy)
+
     inconsistencies = []
     seen = []
     for x in rows:
@@ -482,11 +486,11 @@ def check_csv(FnameCSV):
         value = rows[0][rna]
         if all(x[rna]==value for x in rows):
             constants.append(rna)
-    
+
     print " inconsistencies (%i): %s"%(len(inconsistencies),",".join(inconsistencies) or "-")
     print " constants (%i): %s"%(len(constants),",".join(constants) or "-")
 
-       
+
 def mat2csv(FnameMAT, Threshold):
 	"""
    Threshold for binarization (0 if variable<250 else 1):
@@ -510,11 +514,11 @@ def mat2csv(FnameMAT, Threshold):
 		id_column.append(i+1)
 
 	# Write .csv file
-	np.savetxt(str(FnameMAT[:-4])+'_binary.csv', 
-          	 id_column, 
-          	 delimiter=',', 
+	np.savetxt(str(FnameMAT[:-4])+'_binary.csv',
+          	 id_column,
+          	 delimiter=',',
           	 fmt='%s')
-           
+
 	# Annots column
 	annots_column = []
 	annots_column.append("Annots")
@@ -525,52 +529,52 @@ def mat2csv(FnameMAT, Threshold):
 		if variable == 1:
 			cancer_count=cancer_count+1
 	print " cancer cells: "+str(cancer_count)
-	
+
 	oldfile = open(str(FnameMAT[:-4])+'_binary.csv')
 	olddata = [item for item in csv.reader(oldfile)]
-	oldfile.close()    
+	oldfile.close()
 
 	newdata = []
- 
+
 	for i, item in enumerate(olddata):
     		try:
       	 		item.append(annots_column[i])
     		except IndexError, e:
        	 		item.append("placeholder")
     		newdata.append(item)
- 
+
 	newfile = open(str(FnameMAT[:-4])+'_binary.csv', 'w')
 	csv.writer(newfile).writerows(newdata)
 	newfile.close()
-	
-	# Values of miRNAs in columns            
+
+	# Values of miRNAs in columns
 	# First row to end
-	for r in range(0,row.size):      
-           
+	for r in range(0,row.size):
+
 		oldfile = open(str(FnameMAT[:-4])+'_binary.csv')
 		olddata = [item for item in csv.reader(oldfile)]
-		oldfile.close()    
-      
+		oldfile.close()
+
 		newcolumn = []
 		newcolumn.append("g"+str(r+1))
 		for c in range(0,col.size):
 				variable = datafile['SimDataHeike']['Values'][0,0][r,c]
 				binary = 0 if variable<250 else 1
 				newcolumn.append(binary)
- 
+
 				newdata = []
- 
+
 		for i, item in enumerate(olddata):
     			try:
        				item.append(newcolumn[i])
     			except IndexError, e:
         				item.append("placeholder")
     			newdata.append(item)
- 
+
 		newfile = open(str(FnameMAT[:-4])+'_binary.csv', 'w')
 		csv.writer(newfile).writerows(newdata)
 		newfile.close()
-	
+
 	# Get classifier
 	print " classifier: "
 	for c in range(0,6):
@@ -581,7 +585,7 @@ def mat2csv(FnameMAT, Threshold):
 			if input[r] < 0:
 				nosign = input[r]*-1
 				print "   gate_input("+str(c+1)+",negative,"+str(nosign)+")"
-				
+
 	print " created: "+str(FnameMAT[:-4])+"_binary.csv"
 
 
@@ -592,29 +596,29 @@ def pilot(Parameters, FnamePaths=None):
 
     if not FnamePaths:
         FnamePaths = "paths.cfg"
-        
+
 
     import os
     import subprocess
     import ConfigParser
-    
+
 
     if not os.path.exists(FnamePaths):
-        
+
         print FnamePaths, "does not exist."
         s=["[Executables]",
            "gringo          = /usr/bin/gringo",
            "clasp           = /usr/bin/clasp"]
         s='\n'.join(s)
-        
+
         with open(FnamePaths,"w") as f:
             f.writelines(s)
-            
+
         print "created",FnamePaths
         print "please check paths and run again."
         return
 
-    
+
     config = ConfigParser.SafeConfigParser()
     config.read( os.path.join(FnamePaths) )
     CMD_GRINGO = config.get("Executables", "gringo")
@@ -633,7 +637,7 @@ def pilot(Parameters, FnamePaths=None):
     cmd_clasp  = [CMD_CLASP] + params_clasp
 
     try:
-        
+
         proc_gringo = subprocess.Popen(cmd_gringo, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc_clasp  = subprocess.Popen(cmd_clasp,  stdin=proc_gringo.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -673,7 +677,7 @@ def pilot(Parameters, FnamePaths=None):
             break
         else:
             hit = False
-        
+
     return answers
 
 
@@ -682,10 +686,10 @@ def pilot(Parameters, FnamePaths=None):
 
 
 
-    
- 
- 
- 
+
+
+
+
 
 if __name__=="__main__":
     print "nothing to do"
