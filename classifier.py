@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-
 import csv
 import subprocess
 from scipy.io import loadmat
@@ -106,6 +105,7 @@ def csv2asp(FnameCSV,
         print " optimization strategy:",OptimizationStrategy, "(%s)"%OptimizationStrategyMapping[OptimizationStrategy]
 
     assert(LowerBoundGates>0)
+    assert(LowerBoundInputs>0)
 
     miRNAs, rows = csv2rows(FnameCSV)
 
@@ -207,8 +207,12 @@ def csv2asp(FnameCSV,
     datafile+= ['1 {gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).']
     datafile+= ['']
 
+    datafile+= ['% inputs must be unique for gates']
+    datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign)} 1 :- is_mirna(MiRNA), is_gate_id(GateID)."]
+    datafile+= ['']
+
     if UniquenessConstraint:
-        datafile+= ['% inputs must be unique']
+        datafile+= ['% inputs must be unique for classifier']
         datafile+= ["{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate_id(GateID)} 1 :- is_mirna(MiRNA)."]
         datafile+= ['']
 
@@ -449,6 +453,8 @@ def check_classifier(FnameCSV, GateInputs):
     print " data =",FnameCSV
     if hits:
         print " result = %i inconsistencies"%(len(hits)), hits
+        print " false positives:", false_pos
+        print " false negatives:", false_neg
     else:
         print " result = classifier and data are consistent"
 
@@ -668,7 +674,7 @@ def pilot(Parameters, FnamePaths=None):
 
         if "gate_input" in line:
             if hit:
-                print ">> ANSER OVER SEVERAL LINES! REQURIES BUGFIX"
+                print ">> ANSWER OVER SEVERAL LINES! REQURIES BUGFIX"
             else:
                 hit = True
                 answers+=[line]
