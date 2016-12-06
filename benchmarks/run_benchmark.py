@@ -90,13 +90,16 @@ def run():
 
         time, solution = interfaces.potassco.timed_call_single_solution(fname_asp, TimeOut=TIMEOUT)
 
+        os.remove(fname_csv)
+        os.remove(fname_asp)
+
         fname_result = os.path.join(path_benchmark, file_dataset+'.result')
 
         interfaces.files.write_benchmarkfile(fname_result, time, solution)
         
         counter+= 1
 
-    print(' done:    created 3*{X} files in {PATH}'.format(X=counter,PATH=path_benchmark))
+    print(' done:    created {X} files in {PATH}'.format(X=counter,PATH=path_benchmark))
     
     
     

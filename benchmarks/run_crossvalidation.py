@@ -97,6 +97,9 @@ def run():
                                                TemplateClassifier = CLASSIFIER,
                                                TemplateObjective  = OBJECTIVE)
 
+            os.remove(fname_csv)
+            os.remove(fname_asp)
+
 
             time, gateinputs_solution = interfaces.potassco.timed_call_single_solution(fname_asp, TimeOut=TIMEOUT)
             time_total+= interfaces.plotting.time2int(time)
