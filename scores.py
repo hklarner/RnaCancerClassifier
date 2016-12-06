@@ -223,11 +223,12 @@ def f_2(InputFloat):
 #GateInputs = "gate_input(1,negative,g3) gate_input(2,negative,g4)"
 
 #given circuit
-GateInputs = "gate_input(1,negative,g7) gate_input(2,negative,g6) gate_input(3,negative,g4) gate_input(4,negative,g3) "
-GateInputs+= "gate_input(5,positive,g1) gate_input(5,positive,g2) gate_input(5,positive,g8) "
-GateInputs+= "gate_input(6,positive,g1) gate_input(6,positive,g5) gate_input(6,positive,g8)"
+if __name__=="__main__":
+        GateInputs = "gate_input(1,negative,g7) gate_input(2,negative,g6) gate_input(3,negative,g4) gate_input(4,negative,g3) "
+        GateInputs+= "gate_input(5,positive,g1) gate_input(5,positive,g2) gate_input(5,positive,g8) "
+        GateInputs+= "gate_input(6,positive,g1) gate_input(6,positive,g5) gate_input(6,positive,g8)"
 
-FnameBinaryCSV = "/home/mi/katinkab/synthbio/RnaCancerClassifier/casestudies/C2.csv"
-FnameOriginalCSV = "/home/mi/katinkab/synthbio/RnaCancerClassifier/casestudies/C2_original.csv"
-BinThreshold = 250
-scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold)
+        FnameBinaryCSV = "/home/mi/katinkab/synthbio/RnaCancerClassifier/casestudies/C2.csv"
+        FnameOriginalCSV = "/home/mi/katinkab/synthbio/RnaCancerClassifier/casestudies/C2_original.csv"
+        BinThreshold = 250
+        scores(GateInputs, FnameBinaryCSV, FnameOriginalCSV, BinThreshold)

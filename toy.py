@@ -3,9 +3,9 @@
 
 FnameCSV = "toy.csv"
 FnameASP = "toy.asp"
-LowerBoundInputs = 0
+LowerBoundInputs = 1
 UpperBoundInputs = 10
-LowerBoundGates  = 0
+LowerBoundGates  = 1
 UpperBoundGates  = 2
 GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":2,
               "LowerBoundNeg":0,"UpperBoundNeg":0,
@@ -16,6 +16,12 @@ GateTypes = [{"LowerBoundPos":0,"UpperBoundPos":2,
 EfficiencyConstraint = False
 OptimizationStrategy = 1
 BreakSymmetries = True
+Silent = False
+UniquenessConstraint = False
+PerfectClassifier = True
+UpperBoundFalsePos = 0
+UpperBoundFalseNeg = 0
+
 
 
 import classifier
@@ -32,7 +38,12 @@ if __name__=="__main__":
             GateTypes,
             EfficiencyConstraint,
             OptimizationStrategy,
-            BreakSymmetries)
+            BreakSymmetries,
+            Silent,
+            UniquenessConstraint,
+	    PerfectClassifier,
+	    UpperBoundFalsePos,
+	    UpperBoundFalseNeg)
             
     if 1:
         GateInputs = "gate_input(1,positive,g2) gate_input(2,positive,g3) gate_input(2,negative,g1)"

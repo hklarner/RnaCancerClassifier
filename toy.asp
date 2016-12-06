@@ -7,7 +7,7 @@
 
 % InputFile = toy.csv
 %  efficiency constraints: False
-%  optimization strategy: 1  (minimize inputs then minimize gates)
+%  optimization strategy: 1  (minimize gates then minimize inputs)
 
 
 %%% The tissue data
@@ -19,9 +19,9 @@ data(3,g2,high). data(3,g3,low).
 
 
 %%% User Input
-lower_bound_inputs(0).
+lower_bound_inputs(1).
 upper_bound_inputs(10).
-lower_bound_gates(0).
+lower_bound_gates(1).
 upper_bound_gates(2).
 
 % gate type 1.
@@ -61,9 +61,6 @@ X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, 
 % at least one input for each gate
 1 {gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).
 
-% inputs must be unique
-{gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_gate_id(GateID)} 1 :- is_mirna(MiRNA).
-
 % number of inputs is bounded
 X {gate_input(GateID,Sign,MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} Y :- lower_bound_inputs(X), upper_bound_inputs(Y).
 
@@ -78,7 +75,7 @@ gate_fires(GateID,TissueID) :- gate_input(GateID,negative,MiRNA), data(TissueID,
 classifier(TissueID,healthy) :- not gate_fires(GateID, TissueID), is_gate_id(GateID), is_tissue_id(TissueID).
 classifier(TissueID,cancer) :- not classifier(TissueID, healthy), is_tissue_id(TissueID).
 
-% consistency of classifier and data
+% consistency of classifier and data (PerfectClassifier=True)
 :- tissue(TissueID,healthy), classifier(TissueID,cancer).
 :- tissue(TissueID,cancer),  classifier(TissueID,healthy).
 
@@ -87,12 +84,9 @@ classifier(TissueID,cancer) :- not classifier(TissueID, healthy), is_tissue_id(T
 % gate id symmetries
 GateType1 <= GateType2 :- gate_type(GateID1, GateType1), gate_type(GateID2, GateType2), GateID1 <= GateID2.
 
-% gate input symmetries
-MiRNA1<=MiRNA2 :- gate_type(GateID1, GateType), gate_type(GateID2, GateType), gate_input(GateID1,Sign,MiRNA1), gate_input(GateID2,Sign,MiRNA2), GateID1<=GateID2.
-
 
 % optimization setup 2: first number of inputs then number of gates.
-#minimize{ 1@1,MiRNA: gate_input(GateID,Sign,MiRNA) }.
+#minimize{ 1@1,(GateID,MiRNA): gate_input(GateID,Sign,MiRNA) }.
 #minimize{ 1@2,GateID:gate_input(GateID,Sign,MiRNA) }.
 
 #show gate_input/3.
