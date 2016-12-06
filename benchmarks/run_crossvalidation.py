@@ -58,7 +58,10 @@ def run():
         print(' {PATH} does not exist, stopping.'.format(PATH=path_objective))
         return
 
-    path_crossvalidation = 'crossvalidations/{DATASET}_{TIMEOUT}'.format(DATASET=DATASET, TIMEOUT=TIMEOUT)
+    path_crossvalidation = 'crossvalidations/{DATASET}_{CLASSIFIER}_{OBJECTIVE}_{TIMEOUT}'.format(DATASET=DATASET,
+                                                                                                  CLASSIFIER=CLASSIFIER,
+                                                                                                  OBJECTIVE=OBJECTIVE,
+                                                                                                  TIMEOUT=TIMEOUT)
     if os.path.exists(path_crossvalidation):
         print(' {PATH} is replaced'.format(PATH=path_crossvalidation))
         shutil.rmtree(path_crossvalidation)
