@@ -10,28 +10,29 @@ import interfaces
 
 
 def run():
+    print('\nwelcome to run_benchmark.py')
+    
     args = sys.argv[1:]
 
     if not args:
-        print('Usage: python run_benchmark.py [DATASET] [CLASSIFIER] [OBJECTIVE] [TIMEOUT]')
+        print(' Usage: python run_benchmark.py [DATASET] [CLASSIFIER] [OBJECTIVE] [TIMEOUT]')
         print('')
-        print(' creates the folder benchmarks/DATASET_CLASSIFIER_OBJECTIVE_TIMEOUT with results files')
+        print('  creates the folder benchmarks/DATASET_CLASSIFIER_OBJECTIVE_TIMEOUT with results files')
         print('')
-        print('DATASET is the name of a folder in datasets (e.g. 20x20_100x100_all-positive)')
-        print('CLASSIFIER is the name of a file in templates/classifiers (e.g. all-positive)')
-        print('OBJECTIVE is the name of a file in templates/objectives (e.g. beerenwinkel)')
-        print('TIMEOUT is the duration before timeout of Potassco (see linux command "timeout" for syntax)')
+        print(' DATASET is the name of a folder in datasets (e.g. 20x20_100x100_all-positive)')
+        print(' CLASSIFIER is the name of a file in templates/classifiers (e.g. all-positive)')
+        print(' OBJECTIVE is the name of a file in templates/objectives (e.g. beerenwinkel)')
+        print(' TIMEOUT is the duration before timeout of Potassco (see linux command "timeout" for syntax)')
         print('')
-        print('Example:')
-        print(' python run_benchmark.py 20x20_100x100_all-positive all-positive beerenwinkel 10m')
+        print(' Example:')
+        print('  python run_benchmark.py 20x20_100x100_all-positive all-positive beerenwinkel 10m')
         return
 
     if not len(args)==4:
-        print(args)
-        print('error: need exactly 4 arguments')
+        print(' error: need exactly 4 arguments but got "{X}", stopping.'.format(X=args))
         return
 
-    print('\nwelcome to run_benchmark.py')
+    
     DATASET, CLASSIFIER, OBJECTIVE, TIMEOUT = args
 
     if '_' in CLASSIFIER:
@@ -95,7 +96,7 @@ def run():
 
         fname_result = os.path.join(path_benchmark, file_dataset+'.result')
 
-        interfaces.files.write_benchmarkfile(fname_result, time, solution)
+        interfaces.files.write_benchmark_file(fname_result, time, solution)
         
         counter+= 1
 

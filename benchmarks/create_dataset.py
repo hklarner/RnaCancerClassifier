@@ -9,26 +9,27 @@ import interfaces
 
 
 def run():
+    print('\nwelcome to create_dataset.py')
+
     args = sys.argv[1:]
 
     if not args:
-        print('Usage: python create_dataset.py [FROM] [TO] [SKIP] [CLASSIFIER]')
+        print(' Usage: python create_dataset.py [FROM] [TO] [SKIP] [CLASSIFIER]')
         print('')
-        print('Creates a folder datasets/FROM_TO_CLASSIFIER that contains files 20x20, 21x20, ...')
-        print('each with a 0-1 matrix of the specified dimensions, followed by a classifier')
+        print('  creates a folder datasets/FROM_TO_CLASSIFIER that contains files 20x20, 21x20, ...')
+        print('  each with a 0-1 matrix of the specified dimensions, followed by a classifier')
         print('')
-        print('FROM is the smallest data matrix (e.g. 20x20)')
-        print('TO is the largest data matrix (e.g. 100x100)')
-        print('SKIP is the x and y increase (e.g. 5x5)')
-        print('CLASSIFIER is the name of a classifier template for annotation (file in templates/classifiers)')
+        print(' FROM is the smallest data matrix (e.g. 20x20)')
+        print(' TO is the largest data matrix (e.g. 100x100)')
+        print(' SKIP is the x and y increase (e.g. 5x5)')
+        print(' CLASSIFIER is the name of a classifier template for annotation (file in templates/classifiers)')
         print('')
-        print('Example:')
-        print(' python create_dataset.py 20x20 100x100 5x5 all-positive')
+        print(' Example:')
+        print('  python create_dataset.py 20x20 100x100 5x5 all-positive')
         return
 
     if not len(args)==4:
-        print(args)
-        print('error: need exactly 4 arguments')
+        print('error: need exactly 4 arguments but got "{X}", stopping.'.format(X=args))
         return
 
     FROM, TO, SKIP, CLASSIFIER = args
@@ -49,8 +50,7 @@ def run():
         print('error: underscore is not allowed in template {X}, stopping.'.format(X=CLASSIFIER))
         return
 
-    print('\nwelcome to create_dataset.py')
-
+    
     path_dataset = 'datasets/{FROM}_{TO}_{SKIP}_{CLASSIFIER}'.format(FROM=FROM,TO=TO,SKIP=SKIP,CLASSIFIER=CLASSIFIER)
     if os.path.exists(path_dataset):
         print(' {PATH} is replaced'.format(PATH=path_dataset))

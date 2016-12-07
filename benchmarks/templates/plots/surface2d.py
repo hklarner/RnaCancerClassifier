@@ -10,23 +10,24 @@ import numpy
 import scipy.interpolate
 
 import interfaces
-              
-              
 
 
-def run(Benchmark, DataArray):
+def run(Type, Folder, DataArray, Title=None):
 
-    FROM, TO, SKIP, CLASSIFIER_ANNOTATION, CLASSIFIER_SOLUTION, OBJECTIVE, TIMEOUT = Benchmark.split('_')
+    if Type=='benchmark':
+        FROM, TO, SKIP, CLASSIFIER_ANNOTATION, CLASSIFIER_SOLUTION, OBJECTIVE, TIMEOUT = Folder.split('_')
+        X,Y,Z = interfaces.plotting.convert_data_to_X1d_Y1d_Z1d(DataArray, Key='time')
+    else:
+        FROM, TO, SKIP, CLASSIFIER_ANNOTATION, CLASSIFIER_SOLUTION, OBJECTIVE, TIMEOUT, VALIDATION = Folder.split('_')
+        X,Y,Z = interfaces.plotting.convert_data_to_X1d_Y1d_Z1d(DataArray, Key='performance')
+        
     FROM_X, FROM_Y = map(int,FROM.split('x'))
     TO_X, TO_Y = map(int,TO.split('x'))
     SKIP_X, SKIP_Y = map(int,SKIP.split('x'))
 
-    fname_figure = os.path.join('plots', Benchmark+'_surface2D.pdf')
+    
 
-
-    X,Y,Z = interfaces.plotting.convert_data_to_X1d_Y1d_Z1d(DataArray)
-
-    # matplotlib stuff
+    # here goes matplotlib
     
     figure = matplotlib.pyplot.figure()
     
@@ -39,11 +40,6 @@ def run(Benchmark, DataArray):
 
     norm = matplotlib.colors.Normalize(vmin=0., vmax=max(Z))
     scalarmap = matplotlib.cm.ScalarMappable(norm, cmap)
-
-    
-    #print help(cmap)
-    #return
-    #print map(cmap,sorted(Z))
     
     dx = SKIP_X-1.
     dy = SKIP_Y-1.
@@ -56,26 +52,36 @@ def run(Benchmark, DataArray):
     cbar = matplotlib.pyplot.colorbar(orientation='vertical')
     cbar.set_cmap(cmap)
     cbar.update_normal(mappable=ax)
-    cbar.set_label('time (sec)')
-    
+
+    if Type=='benchmark': 
+        cbar.set_label('time (sec)')
+    else:
+        cbar.set_label('performance')
     
     matplotlib.pyplot.xlabel('tissues')
     matplotlib.pyplot.ylabel('miRNAs')
 
 
+    if not Title:
+        title = ['Objective: {X}'.format(X=OBJECTIVE)]
 
-    
-    title = ['Objective: {X}'.format(X=OBJECTIVE)]
-    if CLASSIFIER_ANNOTATION == CLASSIFIER_SOLUTION:
-        title+= ['Classifier: {X}'.format(X=CLASSIFIER_ANNOTATION)]
+        if CLASSIFIER_ANNOTATION == CLASSIFIER_SOLUTION:
+            title+= ['Classifier: {X}'.format(X=CLASSIFIER_ANNOTATION)]
+        else:
+            title+= ['Classifier (Annot): {X}'.format(X=CLASSIFIER_ANNOTATION),
+                     'Classifier (Soltn): {X}'.format(X=CLASSIFIER_SOLUTION)]
+
+        title+= ['Timeout: {X}'.format(X=TIMEOUT)]
+        figure.suptitle(' / '.join(title))
+
     else:
-        title+= ['Classifier (Annot): {X}'.format(X=CLASSIFIER_ANNOTATION),
-                 'Classifier (Soltn): {X}'.format(X=CLASSIFIER_SOLUTION)]
-    title+= ['Timeout: {X}'.format(X=TIMEOUT)]
+        figure.suptitle(Title)
 
-    figure.suptitle(' / '.join(title))
-
+    fname_figure = os.path.join('plots', Type, Folder+'_surface2D.pdf')
     figure.savefig(fname_figure)
+
+    interfaces.plotting.crop_pdf(fname_figure)
+    print(' created {X}'.format(X=fname_figure))
     
     
 

@@ -80,6 +80,7 @@ def write_csvfile(FnameCSV, Matrix, GateInputs):
 def row2dict(Row):
     #mirnas = ['g{i}'.format(i=i) for i in range(1,len(Row)+1)]
     #header = ''.join(['ID,','Annots,'] + [x for x in mirnas])
+    
     ids1    = ['g%i'%i for i in range(1,len(Row)+1)]
     ids2    = [str(i) for i in range(1,len(Row)+1)]
 
@@ -89,15 +90,15 @@ def row2dict(Row):
     return result
 
 
-def write_benchmarkfile(FnameResult, Time, Solution):
+def write_benchmark_file(Fname, Time, Solution):
     lines = ['solution: {X}'.format(X=Solution),
              'time:     {X}'.format(X=Time)]
     
-    with open(FnameResult,'w') as f:
+    with open(Fname,'w') as f:
         f.write('\n'.join(lines))
 
 
-def read_benchmarkfile(Fname):
+def read_benchmark_file(Fname):
 
     with open(Fname,'r') as f:
         lines = f.readlines()
@@ -107,12 +108,12 @@ def read_benchmarkfile(Fname):
     time     = lines[1].split(':')[1].strip()
 
     return {'time':time, 'solution':solution}
+
     
-    
-def read_benchmarks(FnameBenchmark):
+def read_benchmark_folder(Folder):
 
     # dictionary
-    path = os.path.join('benchmarks', FnameBenchmark)
+    path = os.path.join('benchmarks', Folder)
     array = {}
     for fname in os.listdir(path):
         if not fname.endswith('.result'): continue
@@ -120,33 +121,47 @@ def read_benchmarks(FnameBenchmark):
 
         pos = tuple(map(int,fname.split('.')[0].split('x')))
 
-        path = os.path.join('benchmarks', FnameBenchmark, fname)
-        array[pos] = read_benchmarkfile(path)
+        path = os.path.join('benchmarks', Folder, fname)
+        array[pos] = read_benchmark_file(path)
 
     return array
 
-    if 0:
-        # ndarray
-        max_x = max(x for x,y in results.keys())
-        max_y = max(y for x,y in results.keys())
 
-        ndarray = numpy.zeros(shape=(max_x+1,max_y+1))
-
-        for pos,data in results.items():
-            x,y = pos
-            ndarray[x][y] = data
-
-        return ndarray
-
-
-def write_crossvalidationfile(Fname, Performance, Time):
+def write_crossvalidation_file(Fname, Performance, Time):
     lines = ['performance: {X}'.format(X=Performance),
-             'time:     {X}'.format(X=Time)]
+             'time:        {X}'.format(X=Time)]
     
     with open(Fname,'w') as f:
         f.write('\n'.join(lines))
     
-    
+
+def read_crossvalidation_file(Fname):
+
+    with open(Fname,'r') as f:
+        lines = f.readlines()
+
+    assert(len(lines)==2)
+    performance = lines[0].split(':')[1].strip()
+    time        = lines[1].split(':')[1].strip()
+
+    return {'time':time, 'performance':performance}
+
+
+def read_crossvalidation_folder(Folder):
+
+    # dictionary
+    path = os.path.join('crossvalidations', Folder)
+    array = {}
+    for fname in os.listdir(path):
+        if not fname.endswith('.result'): continue
+        if '~' in fname: continue
+
+        pos = tuple(map(int,fname.split('.')[0].split('x')))
+
+        path = os.path.join('crossvalidations', Folder, fname)
+        array[pos] = read_crossvalidation_file(path)
+
+    return array
     
             
             

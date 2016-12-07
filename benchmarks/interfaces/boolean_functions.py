@@ -119,7 +119,8 @@ def create_random_classifier(Template, MaxMiRNAs):
     
 
 def gateinputs2function(GateInputs):
-    function = CLASSIFIER_SCRIPT.gateinputs2function(GateInputs)
+    with interfaces.files.nostdout():
+        function = CLASSIFIER_SCRIPT.gateinputs2function(GateInputs)
 
     def wrapper(SampleDict):
         SampleDict['Annots'] = '1'

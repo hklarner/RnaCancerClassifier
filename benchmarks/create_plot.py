@@ -8,72 +8,58 @@ import interfaces
 
 
 def run():
+    print('\nwelcome to create_plot.py')
+    
     args = sys.argv[1:]
 
     if not args:
-        print('Usage: python create_plot.py [BENCHMARK] [PLOT]')
+        print(' Usage: python create_plot.py [TEMPLATE] [TYPE] [FOLDER]')
         print('')
-        print('BENCHMARK is the name of a folder in benchmarks (e.g. 20x20_100x100_all-positive)')
-        print('PLOT is the name of a file in templates/plots (e.g. basic)')
-        print('pass special keyword ALL to BENCHMARK to create a plot for every benchmark')
+        print(' TYPE is either "benchmark" or "crossvalidation"')
+        print(' FOLDER is the name of a folder of results files (e.g. 20x20_100x100_all-positive)')
+        print(' TEMPLATE is the name of a file in templates/plots (e.g. surface2d)')
         print('')
-        print('Example:')
-        print(' python create_plot.py 20x20_100x100_all-positive scatter3D')
-        print(' python create_plot.py ALL surface2D')
+        print(' Example:')
+        print('  python create_plot.py 20x20_100x100_all-positive scatter3D')
         return
 
-    if not len(args)==2:
-        print(args)
-        print('error: need exactly 2 arguments')
+    if not len(args)==3:
+        print(' error: need exactly 3 arguments but got "{X}", stopping.'.format(X=args))
         return
 
-    BENCHMARK, PLOT = args
-
-    print('\nwelcome to create_plot.py')
+    TEMPLATE, TYPE, FOLDER = args
 
     # check names
-    if not BENCHMARK=='ALL':
-        print(' reading {X}'.format(X=BENCHMARK))
-        path_benchmark = 'benchmarks/{BENCHMARK}'.format(BENCHMARK=BENCHMARK)
-        if not os.path.exists(path_benchmark):
-            print(' {PATH} does not exist, stopping.'.format(PATH=path_benchmark))
-            return
-
-    path_plot = 'templates/plots/{PLOT}.py'.format(PLOT=PLOT)
-    if not os.path.exists(path_plot):
-        print(' {PATH} does not exist, stopping.'.format(PATH=path_plot))
+    if not TYPE in ['benchmark','crossvalidation']:
+        print(' TYPE must be either "benchmark" or "crossvalidation", not "{X}", stopping.'.format(X=TYPE))
+        return
+    
+    path_results = os.path.join(TYPE+'s',FOLDER)
+    print(' reading {X}'.format(X=path_results))
+    if not os.path.exists(path_results):
+        print(' {PATH} does not exist, stopping.'.format(PATH=path_results))
         return
 
+    path_type = os.path.join('plots',TYPE)
+    if not os.path.exists(path_type):
+        print(' creating {X}.'.format(X=path_type))
+        os.mkdir(path_type)
     try:
-        PLOTTER = importlib.import_module('templates.plots.{X}'.format(X=PLOT))
+        PLOTTER = importlib.import_module('templates.plots.{X}'.format(X=TEMPLATE))
         
     except Exception as EX:
-        print(EX)
-        print(' >> could not import {X}'.format(X=path_plot))
+        print(' can not import {X} because "{Y}", stopping.'.format(X=path_plot, Y=EX))
         raise Exception
 
     
-    
-    if BENCHMARK=='ALL':
-        hit = False
-        for folder in os.listdir('benchmarks'):
-            hit = True
-            print(' reading {X}'.format(X=folder))
-            array = interfaces.files.read_benchmarks(folder)
+    if TYPE=='benchmark':
+        array = interfaces.files.read_benchmark_folder(FOLDER)
+        PLOTTER.run(TYPE, FOLDER, array)
 
-            if not array:
-                print(' no files for {X}, stopping'.format(X=os.path.join('benchmarks',folder)))
-                continue
-            
-            PLOTTER.run(folder, array)
-            print(' created {X}_{P}.pdf'.format(X=folder, P=PLOT))
-        if not hit:
-            print(' benchmarks/ is empty, stopping.')
-            
     else:
-        array = interfaces.files.read_benchmarks(BENCHMARK)
-        PLOTTER.run(BENCHMARK, array)
-        print(' created {X}_{P}.pdf'.format(X=BENCHMARK, P=PLOT))
+        array = interfaces.files.read_crossvalidation_folder(FOLDER)
+        PLOTTER.run(TYPE, FOLDER, array)
+        
     
     
 
