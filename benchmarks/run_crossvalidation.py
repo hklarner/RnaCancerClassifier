@@ -97,10 +97,7 @@ def run():
                                                TemplateClassifier = CLASSIFIER,
                                                TemplateObjective  = OBJECTIVE)
 
-            os.remove(fname_csv)
-            os.remove(fname_asp)
-
-
+            
             time, gateinputs_solution = interfaces.potassco.timed_call_single_solution(fname_asp, TimeOut=TIMEOUT)
             time_total+= interfaces.plotting.time2int(time)
             
@@ -114,6 +111,9 @@ def run():
             row_data = interfaces.files.row2dict(row)
             if function_annotation(row_data) != function_solution(row_data):
                 mismatches+= 1
+
+            os.remove(fname_csv)
+            os.remove(fname_asp)
 
         performance = mismatches / len(full_matrix)
 
