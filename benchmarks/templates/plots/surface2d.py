@@ -19,7 +19,7 @@ def run(Type, Folder, DataArray, Title=None):
         X,Y,Z = interfaces.plotting.convert_data_to_X1d_Y1d_Z1d(DataArray, Key='time')
     else:
         FROM, TO, SKIP, CLASSIFIER_ANNOTATION, CLASSIFIER_SOLUTION, OBJECTIVE, TIMEOUT, VALIDATION = Folder.split('_')
-        X,Y,Z = interfaces.plotting.convert_data_to_X1d_Y1d_Z1d(DataArray, Key='performance')
+        X,Y,Z = interfaces.plotting.convert_data_to_X1d_Y1d_Z1d(DataArray, Key='error')
         
     FROM_X, FROM_Y = map(int,FROM.split('x'))
     TO_X, TO_Y = map(int,TO.split('x'))
@@ -56,7 +56,7 @@ def run(Type, Folder, DataArray, Title=None):
     if Type=='benchmark': 
         cbar.set_label('time (sec)')
     else:
-        cbar.set_label('performance')
+        cbar.set_label('generalization error')
     
     matplotlib.pyplot.xlabel('tissues')
     matplotlib.pyplot.ylabel('miRNAs')
@@ -66,7 +66,7 @@ def run(Type, Folder, DataArray, Title=None):
         title = ['Objective: {X}'.format(X=OBJECTIVE)]
 
         if CLASSIFIER_ANNOTATION == CLASSIFIER_SOLUTION:
-            title+= ['Classifier: {X}'.format(X=CLASSIFIER_ANNOTATION)]
+            title+= ['Classifiers: {X}'.format(X=CLASSIFIER_ANNOTATION)]
         else:
             title+= ['Classifier (Annot): {X}'.format(X=CLASSIFIER_ANNOTATION),
                      'Classifier (Soltn): {X}'.format(X=CLASSIFIER_SOLUTION)]

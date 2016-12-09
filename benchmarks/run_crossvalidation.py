@@ -27,7 +27,7 @@ def run():
         print(' TIMEOUT is the duration before timeout of Potassco (see linux command "timeout" for syntax)')
         print('')
         print(' Example:')
-        print('  python run_crossvalidation.py 20x20_100x100_5x5_all-positive 10m')
+        print('  python run_crossvalidation.py leave-one-out 20x20_100x100_5x5_kobi kobi feasible 10m')
         return
 
     if not len(args)==5:
@@ -102,7 +102,7 @@ def run():
         error_total = 0.0
         time_total  = 0.0
         
-        for matrix, test_data in VALIDATER.generator(full_matrix): ###
+        for matrix, test_data in VALIDATER.generator(full_matrix):
 
             fname_csv = os.path.join(path_crossvalidation, file_dataset+'.csv')
             fname_asp = os.path.join(path_crossvalidation, file_dataset+'.asp')
@@ -119,19 +119,19 @@ def run():
             
             if gateinputs_solution:
                 function_solution = interfaces.boolean_functions.gateinputs2function(gateinputs_solution)
+                error = VALIDATER.get_error(function_annotation, function_solution, test_data)
             else:
-                function_solution = None
+                error = 1
 
-            error = VALIDATER.get_error(function_annotation, function_solution, test_data) ###
             error_total+= error
 
             os.remove(fname_csv)
             os.remove(fname_asp)
 
 
-        performance = VALIDATER.get_performance(error_total, full_matrix) ###
+        error = VALIDATER.get_generalization_error(error_total, full_matrix)
         fname_result = os.path.join(path_crossvalidation, file_dataset+'.result')
-        interfaces.files.write_crossvalidation_file(fname_result, performance, time_total)
+        interfaces.files.write_crossvalidation_file(fname_result, error, time_total)
         counter+= 1
 
     print(' done:    created {X} files in {PATH}'.format(X=counter,PATH=path_crossvalidation))

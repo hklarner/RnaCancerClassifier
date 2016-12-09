@@ -127,8 +127,8 @@ def read_benchmark_folder(Folder):
     return array
 
 
-def write_crossvalidation_file(Fname, Performance, Time):
-    lines = ['performance: {X}'.format(X=Performance),
+def write_crossvalidation_file(Fname, Error, Time):
+    lines = ['error: {X}'.format(X=Error),
              'time:        {X}'.format(X=Time)]
     
     with open(Fname,'w') as f:
@@ -141,10 +141,10 @@ def read_crossvalidation_file(Fname):
         lines = f.readlines()
 
     assert(len(lines)==2)
-    performance = lines[0].split(':')[1].strip()
-    time        = lines[1].split(':')[1].strip()
+    error = lines[0].split(':')[1].strip()
+    time  = lines[1].split(':')[1].strip()
 
-    return {'time':time, 'performance':performance}
+    return {'time':time, 'error':error}
 
 
 def read_crossvalidation_folder(Folder):
