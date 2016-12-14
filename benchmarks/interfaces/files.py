@@ -106,7 +106,7 @@ def read_benchmark_file(Fname):
     assert(len(lines)==2)
     solution = lines[0].split(':')[1].strip()
     time     = lines[1].split(':')[1].strip()
-    if time=='None': time==None
+    if time=='None': time=None
     if solution=='None': solution=None
 
     return {'time':time, 'solution':solution}

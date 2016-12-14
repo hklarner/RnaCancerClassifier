@@ -8,13 +8,6 @@ SECONDS_PATTERN = re.compile("^[0-9]+[\.]?[0-9]+s$") # example: "0.010s"
 
 
 def time2int(Time):
-
-    if not type(Time)==str:
-        print(' potential type problems: {X}={Y}'.format(X=Time,Y=type(Time)))
-
-    if Time=='None':
-        return -1
-    
     if SECONDS_PATTERN.match(Time):
         return float(Time.replace('s',''))
         
@@ -38,7 +31,10 @@ def convert_data_to_X1d_Y1d_Z1d(DataArray, Key):
         Y.append(y)
 
         if Key=='time':
-            Z.append(time2int(data[Key]))
+            if data[Key]==None:
+                Z.append( numpy.nan )
+            else:
+                Z.append(time2int(data[Key]))
         else:
             Z.append(float(data[Key]))
 

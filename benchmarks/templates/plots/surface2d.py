@@ -25,8 +25,6 @@ def run(Type, Folder, DataArray, Title=None):
     TO_X, TO_Y = map(int,TO.split('x'))
     SKIP_X, SKIP_Y = map(int,SKIP.split('x'))
 
-    
-
     # here goes matplotlib
     
     figure = matplotlib.pyplot.figure()
@@ -44,9 +42,41 @@ def run(Type, Folder, DataArray, Title=None):
     dx = SKIP_X-1.
     dy = SKIP_Y-1.
     for x, y, z in zip(X,Y,Z):
-        ax.add_artist(matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color=scalarmap.to_rgba(z), width=dx, height=dy))
 
-    matplotlib.pyplot.scatter(X, Y, c=Z, edgecolors='none', marker='s')
+        if Type=='benchmark':
+
+            found_solution = DataArray[(x,y)]['solution']!=None
+            timed_out      = DataArray[(x,y)]['time']==None
+
+            if found_solution and timed_out:
+                print(' how is found_solution and timed_out possible?')
+                raise Exception
+
+            if found_solution and not timed_out:
+                patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color=scalarmap.to_rgba(z), width=dx, height=dy)
+
+
+            if not found_solution and timed_out:
+                patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color='black', width=dx, height=dy)#, angle=45)
+                patch.set_edgecolor('black')
+
+
+            if not found_solution and not timed_out:
+                patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color=scalarmap.to_rgba(z), width=dx, height=dy)
+                patch.set_edgecolor('black')
+
+                print x,y,type(DataArray[(x,y)]['time'])
+                    
+        
+        elif Type=='crossvalidation':
+            patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color=scalarmap.to_rgba(z), width=dx, height=dy)
+            
+            if (z==0 or z==1):
+                patch.set_edgecolor('black')
+
+        ax.add_artist(patch)
+
+    matplotlib.pyplot.scatter([], [], c=[], edgecolors='none', marker='s')
 
     
     cbar = matplotlib.pyplot.colorbar(orientation='vertical')

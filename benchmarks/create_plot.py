@@ -48,7 +48,7 @@ def run():
         PLOTTER = importlib.import_module('templates.plots.{X}'.format(X=TEMPLATE))
         
     except Exception as EX:
-        print(' can not import {X} because "{Y}", stopping.'.format(X=path_plot, Y=EX))
+        print(' can not import templates.plots.{X} because "{Y}", stopping.'.format(X=TEMPLATE, Y=EX))
         raise Exception
 
     
