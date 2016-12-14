@@ -30,9 +30,9 @@ def get_error(FunctionAnnotation, FunctionSolution, TestData, Debug=False):
         row = interfaces.files.row2dict(row)
         
         if Debug:
-            print('row: {X}'.format(row))
+            print('row: {X}'.format(X=row))
             
-        if FunctionAnnotation(row)==FunctionSolution(row):
+        if FunctionAnnotation(row) != FunctionSolution(row):
             
             if Debug:
                 print('FunctionAnnotation(row)={X}'.format(X=FunctionAnnotation(row)))
