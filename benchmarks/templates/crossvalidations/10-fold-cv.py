@@ -23,13 +23,21 @@ def generator(Matrix):
         yield learningset, testdata
                    
 
-def get_error(FunctionAnnotation, FunctionSolution, TestData):
+def get_error(FunctionAnnotation, FunctionSolution, TestData, Debug=False):
 
     error = 0
     for row in TestData:
         row = interfaces.files.row2dict(row)
         
+        if Debug:
+            print('row: {X}'.format(row))
+            
         if FunctionAnnotation(row)==FunctionSolution(row):
+            
+            if Debug:
+                print('FunctionAnnotation(row)={X}'.format(X=FunctionAnnotation(row)))
+                print('FunctionSolution(row)=  {X}'.format(X=FunctionSolution(row)))
+                
             error+=1
 
     return error

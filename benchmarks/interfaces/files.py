@@ -131,7 +131,7 @@ def read_benchmark_folder(Folder):
 
 def write_crossvalidation_file(Fname, Error, Time):
     lines = ['error: {X}'.format(X=Error),
-             'time:        {X}'.format(X=Time)]
+             'time:  {X}'.format(X=Time)]
     
     with open(Fname,'w') as f:
         f.write('\n'.join(lines))

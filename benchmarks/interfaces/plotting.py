@@ -4,18 +4,24 @@ import interfaces
 import numpy
 import subprocess
 import re
-SECONDS_PATTERN = re.compile("^[0-9]+\.[0-9]+s$") # example: "0.010s"
+SECONDS_PATTERN = re.compile("^[0-9]+[\.]?[0-9]+s$") # example: "0.010s"
 
 
 def time2int(Time):
+
     if not type(Time)==str:
         print(' potential type problems: {X}={Y}'.format(X=Time,Y=type(Time)))
+
+    if Time=='None':
+        return -1
     
-    if not SECONDS_PATTERN.match(Time):
+    if SECONDS_PATTERN.match(Time):
+        return float(Time.replace('s',''))
+        
+    else:
         print(' what time is it: {X}'.format(X=Time))
         raise Exception
-    else:
-        return float(Time.replace('s',''))
+        
 
 
 def crop_pdf(Fname):

@@ -74,7 +74,7 @@ def gate_generator(GateTypes, MaxMiRNAs):
             if occurences[gate_type_id]>=GateTypes[gate_type_id]['UpperBoundOcc']:
                 allowed_gate_types.remove(gate_id)
 
-            yield gate
+            yield gate, gate_type_id
         
     
 
@@ -86,13 +86,21 @@ def create_random_classifier(Template, MaxMiRNAs):
     
     target_number_gates  = random.randint(lower_gates,upper_gates)
     target_number_gates = max(1,target_number_gates)
-    current_number_gates  = 0
+    current_number_gates  = {}
     current_number_inputs = 0
     result = []
 
-    for gate in gate_generator(params['GateTypes'], MaxMiRNAs):
-        if current_number_gates >= target_number_gates:
+    for gate, gate_type in gate_generator(params['GateTypes'], MaxMiRNAs):
+        if sum(current_number_gates.values()) >= target_number_gates:
             break
+
+        if not gate_type in current_number_gates:
+            current_number_gates[gate_type] = 0
+        
+
+        if current_number_gates[gate_type]>= params['GateTypes'][gate_type]['UpperBoundOcc']:
+            continue
+        
         
         current_number_inputs+= gate.count('gate_input')
         if current_number_inputs>params['UpperBoundInputs']:
@@ -105,7 +113,8 @@ def create_random_classifier(Template, MaxMiRNAs):
             raise Exception
 
         result+=[gate]
-        current_number_gates+= 1
+        
+        current_number_gates[gate_type]+= 1
         
         
     if not result:
