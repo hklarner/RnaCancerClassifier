@@ -115,13 +115,22 @@ def run():
 
             
             time, gateinputs_solution = interfaces.potassco.timed_call_single_solution(fname_asp, TimeOut=TIMEOUT)
-            time_total+= interfaces.plotting.time2int(time)
-            
-            if gateinputs_solution:
+
+            if time==None:
+                # timeout, add maximal time
+                time_total+= interfaces.plotting.time2int(TIMEOUT)
+            else:
+                # no timeout, add precise time
+                time_total+= interfaces.plotting.time2int(time)
+
+
+            if gateinputs_solution==None:
+                # no solution, get default error for test data
+                error = VALIDATER.get_error_for_no_solution(function_annotation, test_data)
+            else:
+                # solution, compute error for test data
                 function_solution = interfaces.boolean_functions.gateinputs2function(gateinputs_solution)
                 error = VALIDATER.get_error(function_annotation, function_solution, test_data)
-            else:
-                error = 1
 
             error_total+= error
 

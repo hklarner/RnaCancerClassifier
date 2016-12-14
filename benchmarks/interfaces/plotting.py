@@ -8,8 +8,8 @@ SECONDS_PATTERN = re.compile("^[0-9]+\.[0-9]+s$") # example: "0.010s"
 
 
 def time2int(Time):
-    if Time=='-1':
-        return -1
+    if not type(Time)==str:
+        print(' potential type problems: {X}={Y}'.format(X=Time,Y=type(Time)))
     
     if not SECONDS_PATTERN.match(Time):
         print(' what time is it: {X}'.format(X=Time))

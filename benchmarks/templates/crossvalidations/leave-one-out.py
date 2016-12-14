@@ -21,6 +21,9 @@ def get_error(FunctionAnnotation, FunctionSolution, TestData):
     return 1
 
 
+def get_error_for_no_solution(FunctionAnnotation, TestData):
+    return 1
+
 def get_generalization_error(TotalError, Matrix):
 
     return 1.*TotalError / len(Matrix)

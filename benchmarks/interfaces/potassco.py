@@ -53,7 +53,7 @@ def timed_call_single_solution(FnameASP, TimeOut):
 
     if error:
         if '(clasp): INTERRUPTED by signal!' in error:
-            return -1, None
+            return None, None
         else:
             print()
             print(output)

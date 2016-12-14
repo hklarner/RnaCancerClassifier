@@ -85,7 +85,7 @@ def row2dict(Row):
     ids2    = [str(i) for i in range(1,len(Row)+1)]
 
     result = dict(zip(ids1,Row)+zip(ids2,Row))
-    result['ID'] = 'None'
+    result['ID'] = None
 
     return result
 
@@ -106,6 +106,8 @@ def read_benchmark_file(Fname):
     assert(len(lines)==2)
     solution = lines[0].split(':')[1].strip()
     time     = lines[1].split(':')[1].strip()
+    if time=='None': time==None
+    if solution=='None': solution=None
 
     return {'time':time, 'solution':solution}
 
@@ -143,6 +145,7 @@ def read_crossvalidation_file(Fname):
     assert(len(lines)==2)
     error = lines[0].split(':')[1].strip()
     time  = lines[1].split(':')[1].strip()
+    if time=='None': time==None
 
     return {'time':time, 'error':error}
 

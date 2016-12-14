@@ -35,6 +35,10 @@ def get_error(FunctionAnnotation, FunctionSolution, TestData):
     return error
 
 
+def get_error_for_no_solution(FunctionAnnotation, TestData):
+    return len(TestData)
+
+
 def get_generalization_error(TotalError, Matrix):
 
     return 1.*TotalError / len(Matrix)
