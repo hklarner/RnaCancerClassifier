@@ -69,11 +69,6 @@ def run():
         print(' {PATH} does not exist, stopping.'.format(PATH=path_objective))
         return
 
-    path_template = os.path.join('crossvalidations', TEMPLATE)
-    if not os.path.exists(path_template):
-        print(' creating crossvalidations/{PATH}/'.format(PATH=path_template))
-        os.mkdir(path_template)
-
     path_crossvalidation = 'crossvalidations/{DATASET}_{CLASSIFIER}_{OBJECTIVE}_{TIMEOUT}_{TEMPLATE}'.format(DATASET=DATASET,
                                                                                                              CLASSIFIER=CLASSIFIER,
                                                                                                              OBJECTIVE=OBJECTIVE,

@@ -39,8 +39,8 @@ def run(Type, Folder, DataArray, Title=None):
     norm = matplotlib.colors.Normalize(vmin=0., vmax=max(Z))
     scalarmap = matplotlib.cm.ScalarMappable(norm, cmap)
     
-    dx = SKIP_X-1.
-    dy = SKIP_Y-1.
+    dx = SKIP_X-2.
+    dy = SKIP_Y-2.
     for x, y, z in zip(X,Y,Z):
 
         if Type=='benchmark':

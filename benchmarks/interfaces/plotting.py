@@ -4,18 +4,21 @@ import interfaces
 import numpy
 import subprocess
 import re
-SECONDS_PATTERN = re.compile("^[0-9]+[\.]?[0-9]+s$") # example: "0.010s"
+TIME_PATTERN = re.compile("^[0-9]+[\.]?[0-9]*(?:m|s)$") # example: "0.010s" or "5m"
 
 
 def time2int(Time):
-    if SECONDS_PATTERN.match(Time):
-        return float(Time.replace('s',''))
+    if TIME_PATTERN.match(Time):
+        if 'm' in Time:
+            return 60*float(Time.replace('m',''))
+        else:
+            return float(Time.replace('s',''))
+    
         
     else:
         print(' what time is it: {X}'.format(X=Time))
         raise Exception
         
-
 
 def crop_pdf(Fname):
     subprocess.check_output(['pdfcrop',Fname,Fname])
