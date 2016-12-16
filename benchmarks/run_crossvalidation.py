@@ -134,6 +134,7 @@ def run():
 
 
         error = VALIDATER.get_generalization_error(error_total, full_matrix)
+        time_total = '{X}s'.format(X=time_total)
         fname_result = os.path.join(path_crossvalidation, file_dataset+'.result')
         interfaces.files.write_crossvalidation_file(fname_result, error, time_total)
         counter+= 1

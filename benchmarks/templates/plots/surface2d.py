@@ -29,13 +29,14 @@ def run(Type, Folder, DataArray, Title=None):
     
     figure = matplotlib.pyplot.figure()
     
-    ax = figure.add_subplot(111, aspect='equal')
+    ax = figure.add_subplot(1,1,1, aspect='equal')
     ax.axis([min(X)-1., max(X)+1., min(Y)-1., max(Y)+1.])
 
     cmap = matplotlib.cm.cool
     cmap.set_over('black')
     cmap.set_under('white')
 
+    print "max(Z)", max(Z)
     norm = matplotlib.colors.Normalize(vmin=0., vmax=max(Z))
     scalarmap = matplotlib.cm.ScalarMappable(norm, cmap)
     
@@ -57,16 +58,13 @@ def run(Type, Folder, DataArray, Title=None):
 
 
             if not found_solution and timed_out:
-                patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color='black', width=dx, height=dy)#, angle=45)
+                patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color='white', width=dx, height=dy)#, angle=45)
                 patch.set_edgecolor('black')
 
 
             if not found_solution and not timed_out:
                 patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color=scalarmap.to_rgba(z), width=dx, height=dy)
-                patch.set_edgecolor('black')
-
-                print x,y,type(DataArray[(x,y)]['time'])
-                    
+                patch.set_edgecolor('black')                    
         
         elif Type=='crossvalidation':
             patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color=scalarmap.to_rgba(z), width=dx, height=dy)
@@ -76,7 +74,7 @@ def run(Type, Folder, DataArray, Title=None):
 
         ax.add_artist(patch)
 
-    matplotlib.pyplot.scatter([], [], c=[], edgecolors='none', marker='s')
+    matplotlib.pyplot.scatter(X, Y, c=Z, edgecolors='none', marker='s')
 
     
     cbar = matplotlib.pyplot.colorbar(orientation='vertical')
@@ -107,7 +105,7 @@ def run(Type, Folder, DataArray, Title=None):
     else:
         figure.suptitle(Title)
 
-    fname_figure = os.path.join('plots', Type, Folder+'_surface2D.pdf')
+    fname_figure = os.path.join('plots', Type, Folder+'_surface2d.pdf')
     figure.savefig(fname_figure)
 
     interfaces.plotting.crop_pdf(fname_figure)

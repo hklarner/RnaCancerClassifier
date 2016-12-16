@@ -36,8 +36,10 @@ def convert_data_to_X1d_Y1d_Z1d(DataArray, Key):
         if Key=='time':
             if data[Key]==None:
                 Z.append( numpy.nan )
-            else:
+            elif TIME_PATTERN.match(data[Key]):
                 Z.append(time2int(data[Key]))
+            else:
+                Z.append(float(data[Key]))
         else:
             Z.append(float(data[Key]))
 

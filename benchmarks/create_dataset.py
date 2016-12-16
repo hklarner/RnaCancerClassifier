@@ -22,7 +22,7 @@ def run():
         print(' FROM is the smallest data matrix (e.g. 20x20)')
         print(' TO is the largest data matrix (e.g. 100x100)')
         print(' SKIP is the x and y increase (e.g. 5x5)')
-        print(' CLASSIFIER is the name of a classifier template for annotation (file in templates/classifiers)')
+        print(' CLASSIFIER is the name of a classifier template for annotation (file in templates/classifiers or a keyword in ["binomial",..])')
         print('')
         print(' Example:')
         print('  python create_dataset.py 20x20 100x100 5x5 all-positive')
@@ -63,13 +63,21 @@ def run():
     counter = 0
     print(' creating data sets..', end='')
 
+
+    if os.path.exists(os.path.join('templates','classifiers',CLASSIFIER+'.py')):
+        generator_for_annotation_classifier = lambda y: interfaces.boolean_functions.create_random_classifier_by_asp_specification(CLASSIFIER, MaxMiRNAs=y)
+    elif CLASSIFIER == 'binomial':
+        generator_for_annotation_classifier = interfaces.boolean_functions.create_random_classifier_by_binomial_distribution
+    else:
+        print(' error: {X} is neither a file in templates/classifiers nor a keyword in ["binomial",..]'.format(X=CLASSIFIER))
+        return
     
     
     for x in range(from_x, to_x+1, skip_x):
         for y in range(from_y, to_y+1, skip_y):
             
             matrix = interfaces.matrices.create_matrix(x, y)
-            classifier = interfaces.boolean_functions.create_random_classifier(CLASSIFIER, MaxMiRNAs=y)
+            classifier = generator_for_annotation_classifier(y)
 
             fname_dataset = '{ROWS}x{COLS}'.format(ROWS=x,COLS=y)
             path = os.path.join(path_dataset,fname_dataset)

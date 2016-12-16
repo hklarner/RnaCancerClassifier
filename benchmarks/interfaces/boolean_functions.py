@@ -1,5 +1,6 @@
 
 import random
+import numpy
 
 import sys
 sys.path.insert(0, '../')
@@ -78,7 +79,7 @@ def gate_generator(GateTypes, MaxMiRNAs):
         
     
 
-def create_random_classifier(Template, MaxMiRNAs):
+def create_random_classifier_by_asp_specification(Template, MaxMiRNAs):
     params = interfaces.templates.read_classifier(Template)
 
     lower_gates = max(1,params['LowerBoundGates'])
@@ -124,6 +125,30 @@ def create_random_classifier(Template, MaxMiRNAs):
     result = ' '.join(x.format(ID=i) for i, x in enumerate(result))
     
     return result
+
+
+
+
+def create_random_classifier_by_binomial_distribution(MaxMiRNAs):
+
+    maxgates = max(1,MaxMiRNAs / 10)
+    maxinputs_per_gate = min(5,MaxMiRNAs)
+    cointoss = 0.5
+    available_inputs = range(MaxMiRNAs)
+    gate_template = 'gate_input({ID},{SIGN},{RNA})'
+
+    classifier = []
+    for g in range(max(1,numpy.random.binomial(n=maxgates, p=cointoss))):
+        gate = []
+        for i in range(max(1,numpy.random.binomial(n=maxinputs_per_gate, p=cointoss))):
+            
+            rna = available_inputs.pop(available_inputs.index(random.choice(available_inputs)))+1
+            sign = random.choice(['positive','negative'])
+            gate.append(gate_template.format(ID=g,SIGN=sign,RNA=rna))
+    
+        classifier.append(' '.join(gate))
+                        
+    return ' '.join(classifier)
     
     
 

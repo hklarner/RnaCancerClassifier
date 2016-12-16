@@ -44,6 +44,21 @@ def read_dataset(FnameData):
 
     return matrix, gateinputs
 
+def read_dataset_folder(Folder):
+    
+    # dictionary
+    path = os.path.join('datasets', Folder)
+    array = {}
+    for fname in os.listdir(path):
+        if '~' in fname: continue
+
+        pos = tuple(map(int,fname.split('x')))
+
+        path = os.path.join('datasets', Folder, fname)
+        array[pos] = read_dataset(path)
+
+    return array
+
 
 def write_csvfile(FnameCSV, Matrix, GateInputs):
 

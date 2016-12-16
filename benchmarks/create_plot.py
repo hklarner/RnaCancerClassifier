@@ -33,9 +33,11 @@ def run():
     if not TYPE in ['benchmark','crossvalidation']:
         print(' TYPE must be either "benchmark" or "crossvalidation", not "{X}", stopping.'.format(X=TYPE))
         return
-    
+
     path_results = os.path.join(TYPE+'s',FOLDER)
+
     print(' reading {X}'.format(X=path_results))
+
     if not os.path.exists(path_results):
         print(' {PATH} does not exist, stopping.'.format(PATH=path_results))
         return
@@ -56,9 +58,13 @@ def run():
         array = interfaces.files.read_benchmark_folder(FOLDER)
         PLOTTER.run(TYPE, FOLDER, array)
 
-    else:
+    elif TYPE=='crossvalidation':
         array = interfaces.files.read_crossvalidation_folder(FOLDER)
         PLOTTER.run(TYPE, FOLDER, array)
+
+    else:
+        print(' error: Type "{X}" not known.'.format(X=TYPE))
+        return
         
     
     
