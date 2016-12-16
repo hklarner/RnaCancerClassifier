@@ -55,7 +55,8 @@ def read_dataset_folder(Folder):
         pos = tuple(map(int,fname.split('x')))
 
         path = os.path.join('datasets', Folder, fname)
-        array[pos] = read_dataset(path)
+        matrix, gateinputs = read_dataset(path)
+        array[pos] = {'matrix':matrix, 'annotation_classifier':gateinputs}
 
     return array
 

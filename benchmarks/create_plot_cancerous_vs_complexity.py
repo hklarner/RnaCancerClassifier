@@ -7,10 +7,10 @@ import importlib
 import interfaces
 
 import templates.plots.cancerous_vs_complexity
-
+    
 
 def run():
-    print('\nwelcome to cancerous_vs_complexity.py')
+    print('\nwelcome to plot_cancerous_vs_complexity.py')
     
     args = sys.argv[1:]
 
@@ -29,7 +29,7 @@ def run():
 
     FOLDER_BENCHMARK = args.pop()
     FROM, TO, SKIP, CLASSIFIER_ANNOTATION, CLASSIFIER_SOLUTION, OBJECTIVE, TIMEOUT = FOLDER_BENCHMARK.split('_')
-    FOLDER_DATASET = '_'.join(FROM, TO, SKIP, CLASSIFIER_ANNOTATION)
+    FOLDER_DATASET = '_'.join([FROM, TO, SKIP, CLASSIFIER_ANNOTATION])
 
     # check names
 
@@ -51,8 +51,8 @@ def run():
 
 
     array_benchmark = interfaces.files.read_benchmark_folder(FOLDER_BENCHMARK)
-    array_dataset   = interfaes.files.read_dataset_folder(FOLDER_DATASET)
-    templates.plots.cancerous_vs_complexity.run(FOLDER, array_benchmark, array_dataset)
+    array_dataset   = interfaces.files.read_dataset_folder(FOLDER_DATASET)
+    templates.plots.cancerous_vs_complexity.run(FOLDER_BENCHMARK, array_benchmark, array_dataset)
 
         
     
