@@ -36,7 +36,6 @@ def run(Type, Folder, DataArray, Title=None):
     cmap.set_over('black')
     cmap.set_under('white')
 
-    print "max(Z)", max(Z)
     norm = matplotlib.colors.Normalize(vmin=0., vmax=max(Z))
     scalarmap = matplotlib.cm.ScalarMappable(norm, cmap)
     
@@ -70,7 +69,7 @@ def run(Type, Folder, DataArray, Title=None):
             patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color=scalarmap.to_rgba(z), width=dx, height=dy)
             
             if (z==0 or z==1):
-                patch.set_edgecolor('black')
+                pass #patch.set_edgecolor('black')
 
         ax.add_artist(patch)
 
