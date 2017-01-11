@@ -324,7 +324,11 @@ def gateinputs2pdf(FnamePDF, GateInputs, Silent=False):
         s+= ['"%s" -> "gate%s" [arrowhead="%s", color="%s"];'%(mrna,gate,arrow,color)]
 
     for gate in gates:
-        s+= ['"gate%s" -> "classifier" [arrowhead="normal", color="black"];'%gate]
+        s+= ['"gate%s" -> "AND" [arrowhead="normal", color="black"];'%gate]
+        s+= ['"gate%s" [label="OR", shape=none, margin=0, fillcolor=none];'%gate]
+
+    s+= ['"AND" [shape=none, margin=0, fillcolor=none];']
+        
     s+= ['}']
 
 
