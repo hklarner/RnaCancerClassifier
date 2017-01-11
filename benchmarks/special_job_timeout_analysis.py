@@ -58,7 +58,7 @@ def run():
 
     print("folder: {x}".format(x=Folder))
     print("new timeout: {x}".format(x=TimeOut))
-    print("timeouts: {x}/{y}".format(x=len(timeouts),y=len(DataArray)))
+    print("timeouts: {x}/{y}={z}".format(x=len(timeouts),y=len(DataArray),z=float(len(timeouts))/len(DataArray)))
     print("sample rate: {x}%".format(x=SampleRate*100))
 
     randomsample = random.sample(timeouts, int(SampleRate*len(timeouts)))
