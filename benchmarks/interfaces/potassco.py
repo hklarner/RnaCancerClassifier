@@ -84,6 +84,10 @@ def output2gateids(Output):
     gateids = []
     for line in Output.split('\n'):
 
+        if line == "Answer: 1" and gateids:
+            print("removed sub-optimal solutions")
+            gateids = []
+
         if "gate_input" in line:
             if hit:
                 print ">> ANSWER OVER SEVERAL LINES! REQURIES BUGFIX"

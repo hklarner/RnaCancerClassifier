@@ -36,7 +36,7 @@ def run(Type, Folder, DataArray, Title=None):
     cmap.set_over('black')
     cmap.set_under('white')
 
-    norm = matplotlib.colors.Normalize(vmin=0., vmax=max(Z))
+    norm = matplotlib.colors.Normalize(vmin=0., vmax=numpy.nanmax(Z))
     scalarmap = matplotlib.cm.ScalarMappable(norm, cmap)
     
     dx = SKIP_X-2.
@@ -55,11 +55,9 @@ def run(Type, Folder, DataArray, Title=None):
             if found_solution and not timed_out:
                 patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color=scalarmap.to_rgba(z), width=dx, height=dy)
 
-
             if not found_solution and timed_out:
-                patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color='white', width=dx, height=dy)#, angle=45)
-                patch.set_edgecolor('black')
-
+                patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color='black', width=dx, height=dy)#, angle=45)
+                patch.set_edgecolor('none')
 
             if not found_solution and not timed_out:
                 patch = matplotlib.patches.Rectangle(xy=(x-dx/2., y-dx/2.), color=scalarmap.to_rgba(z), width=dx, height=dy)
@@ -95,8 +93,8 @@ def run(Type, Folder, DataArray, Title=None):
         if CLASSIFIER_ANNOTATION == CLASSIFIER_SOLUTION:
             title+= ['Classifiers: {X}'.format(X=CLASSIFIER_ANNOTATION)]
         else:
-            title+= ['Classifier (Annot): {X}'.format(X=CLASSIFIER_ANNOTATION),
-                     'Classifier (Soltn): {X}'.format(X=CLASSIFIER_SOLUTION)]
+            title+= ['Annot: {X}'.format(X=CLASSIFIER_ANNOTATION),
+                     'Soltn: {X}'.format(X=CLASSIFIER_SOLUTION)]
 
         title+= ['Timeout: {X}'.format(X=TIMEOUT)]
         figure.suptitle(' / '.join(title))
