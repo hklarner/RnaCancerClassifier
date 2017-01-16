@@ -37,7 +37,7 @@ def redo_problem(Folder, X, Y, TimeOut):
     os.remove(fname_asp)
 
     #print('time: {x}'.format(x=time))
-    print(time)
+    print(time,solution)
 
     return time
     
@@ -48,7 +48,7 @@ def run():
     
     DataArray = interfaces.files.read_benchmark_folder(Folder)
     SampleRate = .1
-    TimeOut = "60m"
+    TimeOut = "5h"
 
     timeouts = DataArray.copy()
     
