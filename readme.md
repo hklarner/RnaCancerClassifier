@@ -2,6 +2,10 @@
 This project is about converting miRNA expression profiles of healthy and cancerous tissue samples into an Answer Set Program (ASP)
 that constructs an optimal Boolean classifier for distinguishing between these tissue types in terms of their miRNA fingerprint.
 
+- The code is written in Python 2
+- The computation of the classifiers requires clasp and gringo from [Potassco](http://potassco.sourceforge.net)
+- Send questions / remarks to hannes.klarner@fu-berlin.de or leave an [issue](https://github.com/hklarner/RnaCancerClassifier/issues)
+
 ## What is a classifier?
 Mathematically, a classifier is a Boolean expression where a variable represents _high_ or _low_ presence of a particular miRNA.
 The structure of the Boolean expression should be constrained by the types of biochemical circuits that may be synthesized in a laboratory.
