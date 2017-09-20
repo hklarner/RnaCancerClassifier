@@ -1,0 +1,11 @@
+digraph "classifier" {
+node [color="none", style="filled", shape="rect", fillcolor="gray95"];
+"g2" -> "gate1" [arrowhead="normal", color="black"];
+"g3" -> "gate2" [arrowhead="normal", color="black"];
+"g1" -> "gate2" [arrowhead="tee", color="red"];
+"gate1" -> "AND" [arrowhead="normal", color="black"];
+"gate1" [label="OR", shape=none, margin=0, fillcolor=none];
+"gate2" -> "AND" [arrowhead="normal", color="black"];
+"gate2" [label="OR", shape=none, margin=0, fillcolor=none];
+"AND" [shape=none, margin=0, fillcolor=none];
+}

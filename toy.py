@@ -51,8 +51,8 @@ if __name__=="__main__":
 
     if 1:
         GateInputs = "gate_input(1,positive,g2) gate_input(2,positive,g3) gate_input(2,negative,g1)"
-        FnamePDF = "toy.pdf"
-        classifier.gateinputs2pdf(FnamePDF, GateInputs)
+        Fname = "toy.pdf"
+        classifier.gateinputs2pdf(Fname, GateInputs)
         
     if 0:
         FnameMAT = "toy.mat"

@@ -293,12 +293,13 @@ def csv2asp(FnameCSV,
             print " now run: gringo %s | clasp -n0"%FnameASP
 
 
-def gateinputs2pdf(FnamePDF, GateInputs, Silent=False):
+def gateinputs2pdf(Fname, GateInputs, Silent=False):
     """
     Example for GateInputs:
 
     gate_input(1,positive,g189) gate_input(1,positive,g224) gate_input(2,positive,g89) gate_input(2,positive,g108) gate_input(2,positive,g154) gate_input(3,negative,g31)
     """
+    assert(Fname[-4:]==".dot" or Fname[-4:]==".pdf")
 
     GateInputs = GateInputs.strip()
     GateInputs = GateInputs.split()
@@ -332,17 +333,22 @@ def gateinputs2pdf(FnamePDF, GateInputs, Silent=False):
     s+= ['}']
 
 
-    cmd = ["dot", "-Tpdf", "-o", FnamePDF]
     dotfile = "\n".join(s)
-
-    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = proc.communicate( input=dotfile )
-    proc.stdin.close()
+    
+    if Fname[-4:]==".dot":
+        with open(Fname, "w") as f:
+            f.writelines(dotfile)
+            
+    else:
+        cmd = ["dot", "-Tpdf", "-o", Fname]
+        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = proc.communicate( input=dotfile )
+        proc.stdin.close()
 
     if not Silent:
         print "\n--- gateinputs2pdf"
         print " found %i inputs:"%len(GateInputs),GateInputs
-        print " created", FnamePDF
+        print " created", Fname
 
 
 def gateinputs2function(GateInputs):

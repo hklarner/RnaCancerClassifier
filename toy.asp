@@ -61,6 +61,9 @@ X {gate_input(GateID, negative, MiRNA): is_mirna(MiRNA)} Y :- gate_type(GateID, 
 % at least one input for each gate
 1 {gate_input(GateID,Sign,MiRNA): is_sign(Sign), is_mirna(MiRNA)} :- is_gate_id(GateID).
 
+% inputs must be unique for gates
+{gate_input(GateID,Sign,MiRNA): is_sign(Sign)} 1 :- is_mirna(MiRNA), is_gate_id(GateID).
+
 % number of inputs is bounded
 X {gate_input(GateID,Sign,MiRNA): is_gate_id(GateID), is_sign(Sign), is_mirna(MiRNA)} Y :- lower_bound_inputs(X), upper_bound_inputs(Y).
 
